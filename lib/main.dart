@@ -3,13 +3,11 @@ import 'dart:async';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:egas_delivery/screens/bottom_navigation.dart';
-import 'package:egas_delivery/common/colors.dart';
 import 'package:egas_delivery/screens/login_screen.dart';
 import 'package:egas_delivery/screens/no_internet.dart';
 import 'package:egas_delivery/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:upgrader/upgrader.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -56,17 +54,16 @@ class _MyAppState extends State {
       debugShowCheckedModeBanner: false,
       title: 'egas delivery',
       theme: ThemeData(
+        fontFamily: "Roboto",
         appBarTheme: const AppBarTheme(
           systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: kPrimaryColor,
-            statusBarIconBrightness: Brightness.light,
+            statusBarColor: Colors.white,
+            statusBarIconBrightness: Brightness.dark,
             statusBarBrightness: Brightness.dark,
           ),
         ),
       ),
-      home: UpgradeAlert(
-        child: const Splash(),
-      ),
+      home: const Splash(),
       routes: {
         '/signin': (BuildContext context) => const LoginScreen(),
         '/homePage': (BuildContext context) => const HomePage(),

@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:egas_delivery/common/colors.dart';
 import 'package:egas_delivery/common/responsive.dart';
+import 'package:egas_delivery/model_files/login_model.dart';
 import 'package:egas_delivery/screens/bottom_navigation.dart';
+import 'package:egas_delivery/widgets/custom_appbar.dart';
+import 'package:egas_delivery/widgets/custom_button.dart';
+import 'package:egas_delivery/widgets/custom_form.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatelessWidget {
@@ -13,24 +16,22 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Responsive(
-        mobile: const MobileLoginScreen(),
-        desktop: Row(
-          children: [
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  SizedBox(
-                    width: 450,
-                    child: MobileLoginScreen(),
-                  ),
-                ],
-              ),
+    return Responsive(
+      mobile: const MobileLoginScreen(),
+      desktop: Row(
+        children: [
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                SizedBox(
+                  width: 450,
+                  child: MobileLoginScreen(),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -51,6 +52,8 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
   final _formKey = GlobalKey<FormState>();
   late bool passwordVisibility;
   LoginModel? _user;
+  FocusNode myFocusNode = FocusNode();
+  final FocusNode _myFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -64,181 +67,166 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
     Size size = MediaQuery.of(context).size;
-    return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                "assets/icons/user.png",
-                width: 280,
-                height: 130,
-              ),
-              const Text(
-                'Login',
-                style: TextStyle(fontSize: 20, color: kPrimaryColor),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              TextFormField(
-                controller: mobileController,
-                onChanged: (value) {},
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.phone_in_talk_rounded),
-                  hintText: 'Mobile Number *',
-                  labelText: 'Mobile Number *',
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 18.0, horizontal: 18.0),
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFF101213),
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                validator: (value) {
-                  if (value?.length != 10) {
-                    return 'Please enter a valid mobile number';
-                  } else {
-                    return null;
-                  }
-                },
-              ),
-              const SizedBox(
-                height: 3,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: defaultPadding),
-                child: TextFormField(
-                  keyboardType: TextInputType.visiblePassword,
-                  controller: passwordController,
-                  obscureText: !passwordVisibility,
-                  onChanged: (value) {},
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.lock),
-                    hintText: 'Password *',
-                    labelText: 'Password *',
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 18.0, horizontal: 18.0),
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        width: 1,
+    return Scaffold(
+      appBar: CustomAppBar(appbarText: 'Sign In',),
+      resizeToAvoidBottomInset: false,
+      body: SingleChildScrollView(
+        child: Container(
+          color: kBackground,
+          child: Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                child: Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 50),
+                      Image.asset(
+                        "assets/icons/user.png",
+                        width: 280,
+                        height: 130,
                       ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Color(0xFF101213),
-                        width: 1,
+                      const SizedBox(height: 20),
+                      const Text(
+                        "Welcome Back!",
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),
                       ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    suffixIcon: InkWell(
-                      onTap: () => setState(
-                        () => passwordVisibility = !passwordVisibility,
+                      const SizedBox(
+                        height: 7,
                       ),
-                      focusNode: FocusNode(skipTraversal: true),
-                      child: Icon(
-                        passwordVisibility
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                        color: const Color(0xFF95A1AC),
-                        size: 22,
+                      const Text(
+                        "Sign in to your account!",
+                        style:
+                            TextStyle(fontSize: 16, color: kPrimaryLightColor),
                       ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter valid password';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(
-                height: 3,
-              ),
-              Hero(
-                tag: "login_btn",
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 55.0,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        final String mobileNumber =
-                            mobileController.text.trim();
-                        final String password = passwordController.text.trim();
-                        final LoginModel? user =
-                            await loginUser(mobileNumber, password);
-                        setState(() {
-                          _user = user;
-                        });
-                        if (_user == null) {
-                          Fluttertoast.showToast(
-                              msg: "Invalid Credentials",
-                              toastLength: Toast.LENGTH_LONG,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 16.0);
-                        } else {
-                          savePref(_user!.supplierCode, _user!.custName,
-                              _user!.mobileNumber, _user!.custId);
-                          // ignore: use_build_context_synchronously
-                          Navigator.of(context, rootNavigator: true)
-                              .pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder: (BuildContext context) {
-                                return const HomePage();
-                              },
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      CustomForm(
+                        myFocusNode: myFocusNode,
+                        obscureTxt: false,
+                        keyboardType: TextInputType.phone,
+                        txtController: mobileController,
+                        hintTxt: "Mobile Number*",
+                        labelTxt: "Mobile Number*",
+                        checkValidator: (value) {
+                          if (value?.length != 10) {
+                            return 'Please enter a valid mobile number';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      CustomForm(
+                        myFocusNode: _myFocusNode,
+                        txtController: passwordController,
+                        obscureTxt: !passwordVisibility,
+                        keyboardType: TextInputType.visiblePassword,
+                        hintTxt: "Password*",
+                        labelTxt: "Password*",
+                        icon: InkWell(
+                          onTap: () => setState(
+                            () => passwordVisibility = !passwordVisibility,
+                          ),
+                          focusNode: FocusNode(skipTraversal: true),
+                          child: Icon(
+                            passwordVisibility
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                            color: kPrimaryLightColor,
+                            size: 22,
+                          ),
+                        ),
+                        checkValidator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter valid password';
+                          }
+                          return null;
+                        },
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: SizedBox(
+                          width: 140,
+                          child: TextButton(
+                            onPressed: () {},
+                            style: TextButton.styleFrom(
+                              foregroundColor: kPrimaryLightColor,
                             ),
-                            (_) => false,
-                          );
-                        }
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: kPrimaryColor, elevation: 0),
-                    child: Text(
-                      "Login".toUpperCase(),
-                      style: const TextStyle(fontSize: 15, letterSpacing: 1),
-                    ),
+                            child: const Text(
+                              'Forgot Password?',
+                              textAlign: TextAlign.end,
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        height: 55,
+                        width: double.infinity,
+                        child: CustomButton(
+                          buttonText: 'Sign In',
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              final String mobileNumber =
+                                  mobileController.text.trim();
+                              final String password =
+                                  passwordController.text.trim();
+                              final LoginModel? user =
+                                  await loginUser(mobileNumber, password);
+                              setState(
+                                () {
+                                  _user = user;
+                                },
+                              );
+                              if (_user == null) {
+                                Fluttertoast.showToast(
+                                    msg: "Invalid Credentials",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                              } else {
+                                savePref(
+                                    _user!.supplierCode,
+                                    _user!.name,
+                                    _user!.mobileNumber,
+                                    _user!.groupId,
+                                    _user!.dbId,
+                                    _user!.email);
+                                // ignore: use_build_context_synchronously
+                                Navigator.of(context, rootNavigator: true)
+                                    .pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return const HomePage();
+                                    },
+                                  ),
+                                  (_) => false,
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      )
+                    ],
                   ),
                 ),
               ),
-              TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  foregroundColor: kPrimaryColor,
-                ),
-                child: const Text(
-                  'Forgot Password ?',
-                  style: TextStyle(fontSize: 15),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -247,9 +235,11 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
 }
 
 Future<LoginModel?> loginUser(String mobileNumber, String password) async {
-  const String apiUrl = "${apiLink}login";
-  final response = await http.post(Uri.parse(apiUrl),
-      body: {"mobile_number": mobileNumber, "password": password});
+  const String apiUrl = "${apiLink}loginDB";
+  final response = await http.post(
+    Uri.parse(apiUrl),
+    body: {"mobileNumber": mobileNumber, "password": password},
+  );
   String jsonsDataString = response.body
       .toString(); // toString of Response's body is assigned to jsonDataString
   // ignore: no_leading_underscores_for_local_identifiers
@@ -264,58 +254,15 @@ Future<LoginModel?> loginUser(String mobileNumber, String password) async {
   }
 }
 
-savePref(String supplierCode, String custName, String mobileNumber,
-    String custId) async {
+savePref(String supplierCode, String name, String mobileNumber, String groupId,
+    String dbId, String email) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   preferences.setString("supplierCode", supplierCode);
-  preferences.setString("custName", custName);
+  preferences.setString("name", name);
   preferences.setString("mobileNumber", mobileNumber);
-  preferences.setString("custId", custId);
+  preferences.setString("groupId", groupId);
+  preferences.setString("dbId", dbId);
+  preferences.setString("email", email);
   // ignore: deprecated_member_use
   preferences.commit();
-}
-
-LoginModel loginModelFromJson(String str) =>
-    LoginModel.fromJson(json.decode(str));
-
-String loginModelToJson(LoginModel data) => json.encode(data.toJson());
-
-class LoginModel {
-  LoginModel({
-    required this.fbid,
-    required this.supplierCode,
-    required this.custId,
-    required this.mobileNumber,
-    required this.custName,
-    required this.custCode,
-    required this.isProfileCreated,
-  });
-
-  dynamic fbid;
-  String supplierCode;
-  String custId;
-  String mobileNumber;
-  String custName;
-  String custCode;
-  String isProfileCreated;
-
-  factory LoginModel.fromJson(Map<String, dynamic> json) => LoginModel(
-        fbid: json["fbid"],
-        supplierCode: json["supplier_code"],
-        custId: json["cust_id"],
-        mobileNumber: json["mobile_number"],
-        custName: json["cust_name"],
-        custCode: json["cust_code"],
-        isProfileCreated: json["is_profile_created"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "fbid": fbid,
-        "supplier_code": supplierCode,
-        "cust_id": custId,
-        "mobile_number": mobileNumber,
-        "cust_name": custName,
-        "cust_code": custCode,
-        "is_profile_created": isProfileCreated,
-      };
 }

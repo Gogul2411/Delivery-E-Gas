@@ -1,6 +1,10 @@
 import 'dart:collection';
 import 'package:egas_delivery/common/colors.dart';
+import 'package:egas_delivery/screens/dashboard.dart';
+import 'package:egas_delivery/screens/orders.dart';
+import 'package:egas_delivery/screens/profile.dart';
 import 'package:flutter/material.dart';
+import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,7 +16,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final ListQueue<int> _navigationQueue = ListQueue();
   int _index = 0;
-  static const List<Widget> _widgetOptions = <Widget>[];
+  static const List<Widget> _widgetOptions = <Widget>[
+    Dashboard(),
+    Orders(),
+    ProfileScreen()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -32,44 +40,47 @@ class _HomePageState extends State<HomePage> {
         body: Center(
           child: _widgetOptions.elementAt(_index),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined, size: 30),
-              label: 'Home',
+        bottomNavigationBar: SizedBox(
+          height: 80,
+          width: double.infinity,
+          child: StylishBottomBar(
+            items: [
+              BubbleBarItem(
+                  icon: const Icon(Icons.home_outlined, size: 30),
+                  title: const Text('Home'),
+                  backgroundColor: kPrimaryColor),
+              BubbleBarItem(
+                  icon: const Icon(Icons.bar_chart_sharp, size: 30),
+                  title: const Text('Orders'),
+                  backgroundColor: kPrimaryColor),
+              BubbleBarItem(
+                  icon: const Icon(Icons.account_circle_outlined, size: 30),
+                  title: const Text('Profile'),
+                  backgroundColor: kPrimaryColor),
+            ],
+            unselectedIconColor: Colors.black45,
+            barStyle: BubbleBarStyle.horizotnal,
+            bubbleFillStyle: BubbleFillStyle.fill,
+            elevation: 0.0,
+            borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(25),
+              topLeft: Radius.circular(25),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag, size: 30),
-              label: 'Products',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart_sharp, size: 30),
-              label: 'Orders',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.local_grocery_store_outlined, size: 30),
-              label: 'Cart',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle_outlined, size: 30),
-              label: 'Profile',
-            ),
-          ],
-          selectedItemColor: kPrimaryColor,
-          unselectedItemColor: Colors.black45,
-          backgroundColor: Colors.white,
-          currentIndex: _index,
-          onTap: (index) {
-            if (index != _index) {
-              _navigationQueue.removeWhere((element) => element == index);
-              _navigationQueue.addLast(index);
-              setState(
-                () {
-                  _index = index;
-                },
-              );
-            }
-          },
+            opacity: 0.3,
+            backgroundColor: Colors.white,
+            currentIndex: _index,
+            onTap: (index) {
+              if (index != _index) {
+                _navigationQueue.removeWhere((element) => element == index);
+                _navigationQueue.addLast(index!);
+                setState(
+                  () {
+                    _index = index;
+                  },
+                );
+              }
+            },
+          ),
         ),
       ),
     );
