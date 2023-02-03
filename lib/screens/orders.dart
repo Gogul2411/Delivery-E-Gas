@@ -123,14 +123,14 @@ class _OrdersState extends State<Orders> {
 
   /// List of Tab Bar Item
   List<String> items = [
-    "All orders",
+    "All Orders",
     "Pendings",
     "Delivered",
     "Cancelled",
   ];
 
   /// List of orders status
-  List<String> status = ["allOrders", "pendings", "delivered", "cancelled"];
+  List<String> status = ["allOrders", "pending", "delivered", "cancelled"];
   int current = 0;
 
   @override
@@ -166,10 +166,8 @@ class _OrdersState extends State<Orders> {
                           setState(
                             () {
                               current = index;
-                              setState(() {
-                                _loadMore();
-                              });
-                              print(current);
+                              _page = 0;
+                              _firstLoad();
                             },
                           );
                         },
