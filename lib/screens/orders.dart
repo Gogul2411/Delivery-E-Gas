@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:egas_delivery/screens/order_details.dart';
 import 'package:http/http.dart' as http;
 import 'package:egas_delivery/common/colors.dart';
 import 'package:egas_delivery/widgets/custom_appbar.dart';
@@ -225,174 +226,192 @@ class _OrdersState extends State<Orders> {
                                               int index) {
                                             return Column(
                                               children: [
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    color: Colors.white,
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10),
-                                                    child: Row(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                          height: 100,
-                                                          width: 100,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5),
-                                                            color: const Color(
-                                                                0xFFf2f2f2),
-                                                          ),
-                                                          child: ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8.0),
-                                                            child:
-                                                                Image.network(
-                                                              'https://cdn3d.iconscout.com/3d/premium/thumb/product-5806313-4863042.png',
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                              height: double
-                                                                  .infinity,
-                                                              width: double
-                                                                  .infinity,
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
+                                                InkWell(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      color: Colors.white,
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            height: 100,
+                                                            width: 100,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5),
+                                                              color: const Color(
+                                                                  0xFFf2f2f2),
+                                                            ),
+                                                            child: ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                              child:
+                                                                  Image.network(
+                                                                'https://cdn3d.iconscout.com/3d/premium/thumb/product-5806313-4863042.png',
+                                                                fit: BoxFit
+                                                                    .contain,
+                                                                height: double
+                                                                    .infinity,
+                                                                width: double
+                                                                    .infinity,
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 20,
-                                                        ),
-                                                        Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            const SizedBox(
-                                                              height: 2,
-                                                            ),
-                                                            Text(
-                                                              'ORDER : #${_posts[index]['order_id']}',
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          15),
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            Row(
-                                                              children: [
-                                                                const Icon(
-                                                                  Icons
-                                                                      .location_on_outlined,
-                                                                  color:
-                                                                      kPrimaryColor,
-                                                                  size: 15,
-                                                                ),
-                                                                const SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 190,
-                                                                  child: Text(
+                                                          const SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              const SizedBox(
+                                                                height: 2,
+                                                              ),
+                                                              Text(
+                                                                'ORDER : #${_posts[index]['order_id']}',
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            15),
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  const Icon(
+                                                                    Icons
+                                                                        .location_on_outlined,
+                                                                    color:
+                                                                        kPrimaryColor,
+                                                                    size: 15,
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    width: 5,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 190,
+                                                                    child: Text(
+                                                                      _posts[index]
+                                                                              [
+                                                                              "address"]
+                                                                          .toString()
+                                                                          .replaceAll(
+                                                                              "\n",
+                                                                              " "),
+                                                                      maxLines:
+                                                                          1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      style: const TextStyle(
+                                                                          fontSize:
+                                                                              12,
+                                                                          color:
+                                                                              Colors.black54),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Row(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  const Icon(
+                                                                    Icons
+                                                                        .watch_later_outlined,
+                                                                    color:
+                                                                        kPrimaryColor,
+                                                                    size: 15,
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    width: 7,
+                                                                  ),
+                                                                  Text(
                                                                     _posts[index]
-                                                                            [
-                                                                            "address"]
-                                                                        .toString()
-                                                                        .replaceAll(
-                                                                            "\n",
-                                                                            " "),
-                                                                    maxLines: 1,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
+                                                                        [
+                                                                        'created_on'],
                                                                     style: const TextStyle(
                                                                         fontSize:
                                                                             12,
                                                                         color: Colors
                                                                             .black54),
                                                                   ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            Row(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                const Icon(
-                                                                  Icons
-                                                                      .watch_later_outlined,
-                                                                  color:
-                                                                      kPrimaryColor,
-                                                                  size: 15,
-                                                                ),
-                                                                const SizedBox(
-                                                                  width: 7,
-                                                                ),
-                                                                Text(
-                                                                  _posts[index][
-                                                                      'created_on'],
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          12,
-                                                                      color: Colors
-                                                                          .black54),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            Container(
-                                                              height: 30,
-                                                              width: 90,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                                color: const Color(
-                                                                    0xFFf7f7f7),
+                                                                ],
                                                               ),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  _posts[index][
-                                                                      'status_label'],
-                                                                  style:
-                                                                      TextStyle(
-                                                                          color:
-                                                                              HexColor(
-                                                                            _posts[index]['status_color'],
-                                                                          ),
-                                                                          fontSize:
-                                                                              12),
+                                                              const SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Container(
+                                                                height: 30,
+                                                                width: 90,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5),
+                                                                  color: const Color(
+                                                                      0xFFf7f7f7),
+                                                                ),
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    _posts[index]
+                                                                        [
+                                                                        'status_label'],
+                                                                    style: TextStyle(
+                                                                        color: HexColor(
+                                                                          _posts[index]
+                                                                              [
+                                                                              'status_color'],
+                                                                        ),
+                                                                        fontSize: 12),
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
+                                                  onTap: () async {
+                                                    final orderId =
+                                                        _posts[index]['ord_id'];
+                                                    // ignore: unused_local_variable
+                                                    final user =
+                                                        savePref(orderId);
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const OrderDetails(),
+                                                      ),
+                                                    );
+                                                  },
                                                 ),
                                                 const SizedBox(
                                                   height: 15,
@@ -444,4 +463,11 @@ class _OrdersState extends State<Orders> {
       ),
     );
   }
+}
+
+savePref(String orderId) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  preferences.setString("orderId", orderId);
+  // ignore: deprecated_member_use
+  preferences.commit();
 }
