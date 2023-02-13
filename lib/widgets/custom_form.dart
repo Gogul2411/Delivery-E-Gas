@@ -13,6 +13,7 @@ class CustomForm extends StatelessWidget {
     this.icon,
     this.formEnabled,
     this.iconData,
+    this.maxlines,
     required this.checkValidator,
     required this.obscureTxt,
   }) : super(key: key);
@@ -27,10 +28,12 @@ class CustomForm extends StatelessWidget {
   String? hintTxt;
   String? Function(String?)? checkValidator;
   Widget? icon;
+  int? maxlines;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLines: maxlines,
       enabled: formEnabled,
       focusNode: myFocusNode,
       cursorColor: Colors.black,

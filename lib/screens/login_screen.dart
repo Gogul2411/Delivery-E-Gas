@@ -68,7 +68,9 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
     // ignore: unused_local_variable
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: CustomAppBar(appbarText: 'Sign In',),
+      appBar: CustomAppBar(
+        appbarText: 'Sign In',
+      ),
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         child: Container(
@@ -125,6 +127,7 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                         height: 30,
                       ),
                       CustomForm(
+                        maxlines: 1,
                         myFocusNode: _myFocusNode,
                         txtController: passwordController,
                         obscureTxt: !passwordVisibility,

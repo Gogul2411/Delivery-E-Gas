@@ -1,9 +1,8 @@
-// ignore_for_file: dead_code
-
 import 'dart:convert';
 import 'package:egas_delivery/common/colors.dart';
 import 'package:egas_delivery/widgets/custom_appbar.dart';
 import 'package:egas_delivery/widgets/custom_button.dart';
+import 'package:egas_delivery/widgets/custom_form.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,7 +15,6 @@ class Order {
   Order({
     required this.paymentMode,
     required this.orderStatus,
-    required this.reason,
     required this.order,
     required this.supplier,
     required this.address,
@@ -25,7 +23,6 @@ class Order {
 
   List<String> paymentMode;
   List<String> orderStatus;
-  Reason reason;
   OrderClass order;
   Supplier supplier;
   Address address;
@@ -34,7 +31,6 @@ class Order {
   factory Order.fromJson(Map<String, dynamic> json) => Order(
         paymentMode: List<String>.from(json["payment_mode"].map((x) => x)),
         orderStatus: List<String>.from(json["order_status"].map((x) => x)),
-        reason: Reason.fromJson(json["reason"]),
         order: OrderClass.fromJson(json["order"]),
         supplier: Supplier.fromJson(json["supplier"]),
         address: Address.fromJson(json["address"]),
@@ -45,7 +41,6 @@ class Order {
   Map<String, dynamic> toJson() => {
         "payment_mode": List<dynamic>.from(paymentMode.map((x) => x)),
         "order_status": List<dynamic>.from(orderStatus.map((x) => x)),
-        "reason": reason.toJson(),
         "order": order.toJson(),
         "supplier": supplier.toJson(),
         "address": address.toJson(),
@@ -96,6 +91,11 @@ class OrderClass {
     required this.orderNotes,
     required this.orderStatus,
     required this.reason,
+    required this.statusLabel,
+    required this.paymentLabel,
+    required this.subtotal,
+    required this.tax,
+    required this.deliveryCharge,
   });
 
   String ordId;
@@ -111,6 +111,11 @@ class OrderClass {
   String orderNotes;
   String orderStatus;
   String reason;
+  String statusLabel;
+  String paymentLabel;
+  String subtotal;
+  int tax;
+  int deliveryCharge;
 
   factory OrderClass.fromJson(Map<String, dynamic> json) => OrderClass(
         ordId: json["ord_id"],
@@ -126,6 +131,11 @@ class OrderClass {
         orderNotes: json["order_notes"],
         orderStatus: json["order_status"],
         reason: json["reason"],
+        statusLabel: json["status_label"],
+        paymentLabel: json["payment_label"],
+        subtotal: json["subtotal"],
+        tax: json["tax"],
+        deliveryCharge: json["delivery_charge"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -142,6 +152,11 @@ class OrderClass {
         "order_notes": orderNotes,
         "order_status": orderStatus,
         "reason": reason,
+        "status_label": statusLabel,
+        "payment_label": paymentLabel,
+        "subtotal": subtotal,
+        "tax": tax,
+        "delivery_charge": deliveryCharge,
       };
 }
 
@@ -178,26 +193,6 @@ class OrderItem {
         "quantity": quantity,
         "cost": cost,
         "total_amount": totalAmount,
-      };
-}
-
-class Reason {
-  Reason({
-    required this.pending,
-    required this.cancelled,
-  });
-
-  List<String> pending;
-  List<String> cancelled;
-
-  factory Reason.fromJson(Map<String, dynamic> json) => Reason(
-        pending: List<String>.from(json["pending"].map((x) => x)),
-        cancelled: List<String>.from(json["cancelled"].map((x) => x)),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "pending": List<dynamic>.from(pending.map((x) => x)),
-        "cancelled": List<dynamic>.from(cancelled.map((x) => x)),
       };
 }
 
@@ -276,6 +271,8 @@ Future<Order> ordersList() async {
   }
 }
 
+enum OrderStat { javatpoint, w3schools, tutorialandexample }
+
 class OrderDetails extends StatefulWidget {
   const OrderDetails({Key? key}) : super(key: key);
 
@@ -285,14 +282,19 @@ class OrderDetails extends StatefulWidget {
 }
 
 class _OrderDetailsState extends State<OrderDetails> {
+  TextEditingController notesController = TextEditingController();
   late Future<Order> productData;
   late Future<List<OrderItem>> _orderItem;
+  FocusNode myFocusNode = FocusNode();
+  String? orderStatus;
+  String? paymentMode;
 
   @override
   void initState() {
     super.initState();
     productData = ordersList();
     _orderItem = orderItem();
+    notesController = TextEditingController();
   }
 
   @override
@@ -301,275 +303,482 @@ class _OrderDetailsState extends State<OrderDetails> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: CustomAppBar(appbarText: "Order Details"),
-      body: SingleChildScrollView(
-        child: Container(
-          color: kBackground,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-            child: Center(
-              child: FutureBuilder<Order>(
-                future: productData,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasData) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 50,
-                          ),
-                          Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(3),
-                              color: Colors.white,
+      body: Center(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Container(
+            color: kBackground,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+              child: Center(
+                child: FutureBuilder<Order>(
+                  future: productData,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.hasData) {
+                        orderStatus = snapshot.data!.order.statusLabel;
+                        paymentMode = snapshot.data!.order.paymentLabel;
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 10,
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(7),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        "Order Id",
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.black38),
-                                      ),
-                                      Text(
-                                        '#${snapshot.data!.order.orderId}',
-                                        style: const TextStyle(fontSize: 15),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        'Order Date',
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.black38),
-                                      ),
-                                      Text(
-                                        snapshot.data!.order.createdOn,
-                                        style: const TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.black38),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Divider(
-                                      thickness: 1,
-                                      color: Color.fromARGB(255, 241, 241, 241),
-                                      height: 2),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Column(
-                                    children: [
-                                      const Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          'Delivery Address',
-                                          style: TextStyle(fontSize: 15),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(3),
+                                color: Colors.white,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(7),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          "Order Id",
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black38),
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          snapshot.data!.address.customerName,
+                                        Text(
+                                          '#${snapshot.data!.order.orderId}',
+                                          style: const TextStyle(fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          'Order Date',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black38),
+                                        ),
+                                        Text(
+                                          snapshot.data!.order.createdOn,
                                           style: const TextStyle(
-                                            color: Colors.black38,
-                                            fontSize: 13,
+                                              fontSize: 15,
+                                              color: Colors.black38),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    const Divider(
+                                        thickness: 1,
+                                        color:
+                                            Color.fromARGB(255, 241, 241, 241),
+                                        height: 2),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Column(
+                                      children: [
+                                        const Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            'Delivery Address',
+                                            style: TextStyle(fontSize: 15),
                                           ),
                                         ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          snapshot.data!.address.address,
-                                          style: const TextStyle(
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            snapshot.data!.address.customerName,
+                                            style: const TextStyle(
+                                              color: Colors.black38,
                                               fontSize: 13,
-                                              color: Colors.black38),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      const Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          'Mobile Number',
-                                          style: TextStyle(fontSize: 15),
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            snapshot.data!.address.address,
+                                            style: const TextStyle(
+                                                fontSize: 13,
+                                                color: Colors.black38),
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          snapshot.data!.order.customerMobile,
-                                          style: const TextStyle(
-                                              fontSize: 13,
-                                              color: Colors.black38),
+                                        const SizedBox(height: 10),
+                                        const Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            'Mobile Number',
+                                            style: TextStyle(fontSize: 15),
+                                          ),
                                         ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            snapshot.data!.order.customerMobile,
+                                            style: const TextStyle(
+                                                fontSize: 13,
+                                                color: Colors.black38),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.white,
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 50,
+                                    decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(5),
+                                          topRight: Radius.circular(5)),
+                                      color: Color.fromARGB(255, 213, 236, 255),
+                                    ),
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: const [
+                                          Text(
+                                            'Items',
+                                            style: TextStyle(fontSize: 17),
+                                          ),
+                                          Text(
+                                            'Total',
+                                            style: TextStyle(fontSize: 17),
+                                          )
+                                        ],
                                       ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                    ],
+                                    ),
                                   ),
+                                  Center(
+                                    child: FutureBuilder<List<OrderItem>>(
+                                      future: _orderItem,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          List<OrderItem>? data = snapshot.data;
+                                          return ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemCount: data!.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        8, 5, 8, 5),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      data[index].productName,
+                                                      style: const TextStyle(
+                                                          fontSize: 15),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          '₹ ${data[index].cost} x ${data[index].quantity}',
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .black38,
+                                                                  fontSize: 13),
+                                                        ),
+                                                        Text(
+                                                          '₹ ${data[index].totalAmount}',
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .black38,
+                                                                  fontSize: 13),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    const Divider(
+                                                        thickness: 1.5,
+                                                        color: Color.fromARGB(
+                                                            255, 241, 241, 241),
+                                                        height: 1),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Text("${snapshot.error}");
+                                        }
+                                        // By default show a loading spinner.
+                                        return const Center();
+                                      },
+                                    ),
+                                  ),
+                                  // Align(
+                                  //   alignment: Alignment.topLeft,
+                                  //   child: TextButton(
+                                  //     onPressed: () {
+                                  //       final custId =
+                                  //           snapshot.data!.order.custId;
+                                  //       // ignore: unused_local_variable
+                                  //       final user = savePref(custId);
+                                  //       Navigator.of(context)
+                                  //           .push(
+                                  //             MaterialPageRoute(
+                                  //                 builder: (_) =>
+                                  //                     const Products()),
+                                  //           )
+                                  //           .then((val) => val
+                                  //               ? setState(
+                                  //                   () {
+                                  //                     productData =
+                                  //                         ordersList();
+                                  //                     _orderItem = orderItem();
+                                  //                   },
+                                  //                 )
+                                  //               : null);
+                                  //     },
+                                  //     style: TextButton.styleFrom(
+                                  //       foregroundColor: kPrimaryColor,
+                                  //     ),
+                                  //     child: const Text(
+                                  //       'Add more items',
+                                  //       style: TextStyle(fontSize: 13),
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Colors.white,
+                            const SizedBox(
+                              height: 10,
                             ),
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 50,
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(5),
-                                        topRight: Radius.circular(5)),
-                                    color: Color.fromARGB(255, 213, 236, 255),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: const [
-                                        Text(
-                                          'Items',
-                                          style: TextStyle(fontSize: 17),
-                                        ),
-                                        Text(
-                                          'Total',
-                                          style: TextStyle(fontSize: 17),
-                                        )
-                                      ],
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.white,
+                              ),
+                              child: Container(
+                                margin: const EdgeInsets.all(10),
+                                child: Column(
+                                  children: [
+                                    const Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Order Status',
+                                        style: TextStyle(fontSize: 15),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                Center(
-                                  child: FutureBuilder<List<OrderItem>>(
-                                    future: _orderItem,
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        List<OrderItem>? data = snapshot.data;
-                                        return ListView.separated(
-                                          shrinkWrap: true,
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          itemCount: data!.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    data[index].productName,
-                                                    style: const TextStyle(
-                                                        fontSize: 15),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        '₹ ${data[index].cost}*${data[index].quantity}',
-                                                        style: const TextStyle(
-                                                            color:
-                                                                Colors.black38,
-                                                            fontSize: 13),
-                                                      ),
-                                                      Text(
-                                                        '₹ ${data[index].totalAmount}',
-                                                        style: const TextStyle(
-                                                            color:
-                                                                Colors.black38,
-                                                            fontSize: 13),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      height: 40,
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        physics: const BouncingScrollPhysics(),
+                                        itemCount:
+                                            snapshot.data!.orderStatus.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return Row(
+                                            children: <Widget>[
+                                              Radio(
+                                                visualDensity:
+                                                    const VisualDensity(
+                                                        horizontal:
+                                                            VisualDensity
+                                                                .minimumDensity,
+                                                        vertical: VisualDensity
+                                                            .minimumDensity),
+                                                materialTapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                                value: snapshot
+                                                    .data!.orderStatus[index],
+                                                groupValue: orderStatus,
+                                                activeColor: kPrimaryColor,
+                                                onChanged: (value) {
+                                                  setState(
+                                                    () {
+                                                      orderStatus = value;
+                                                      print(orderStatus);
+                                                    },
+                                                  );
+                                                },
                                               ),
-                                            );
-                                          },
-                                          separatorBuilder: (context, index) {
-                                            return const Divider(
-                                                thickness: 1,
-                                                color: Color.fromARGB(
-                                                    255, 185, 185, 185),
-                                                height: 5);
-                                          },
-                                        );
-                                      } else if (snapshot.hasError) {
-                                        return Text("${snapshot.error}");
-                                      }
-                                      // By default show a loading spinner.
-                                      return const CircularProgressIndicator();
-                                    },
-                                  ),
-                                ),
-                                const Divider(
-                                    thickness: 1.5,
-                                    color: Color.fromARGB(255, 241, 241, 241),
-                                    height: 1),
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: TextButton(
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: kPrimaryColor,
+                                              const SizedBox(
+                                                width: 5,
+                                              ),
+                                              Text(
+                                                snapshot
+                                                    .data!.orderStatus[index],
+                                                style: const TextStyle(
+                                                    fontSize: 13),
+                                              ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
                                     ),
-                                    child: const Text(
-                                      'Add more items',
-                                      style: TextStyle(fontSize: 13),
+                                    const SizedBox(
+                                      height: 5,
                                     ),
-                                  ),
+                                    const Divider(
+                                        thickness: 1.5,
+                                        color:
+                                            Color.fromARGB(255, 241, 241, 241),
+                                        height: 1),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    const Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Payment Mode',
+                                        style: TextStyle(fontSize: 15),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      height: 40,
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        physics: const BouncingScrollPhysics(),
+                                        itemCount:
+                                            snapshot.data!.paymentMode.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return Row(
+                                            children: <Widget>[
+                                              Radio(
+                                                value: snapshot
+                                                    .data!.paymentMode[index],
+                                                groupValue: paymentMode,
+                                                activeColor: kPrimaryColor,
+                                                visualDensity:
+                                                    const VisualDensity(
+                                                        horizontal:
+                                                            VisualDensity
+                                                                .minimumDensity,
+                                                        vertical: VisualDensity
+                                                            .minimumDensity),
+                                                materialTapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    paymentMode = value;
+                                                    print(paymentMode);
+                                                  });
+                                                },
+                                              ),
+                                              const SizedBox(
+                                                width: 5,
+                                              ),
+                                              Text(
+                                                snapshot
+                                                    .data!.paymentMode[index],
+                                                style: const TextStyle(
+                                                    fontSize: 13),
+                                              ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    const Divider(
+                                        thickness: 1.5,
+                                        color:
+                                            Color.fromARGB(255, 241, 241, 241),
+                                        height: 1),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    const Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Order Notes',
+                                        style: TextStyle(fontSize: 15),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
+                                    CustomForm(
+                                        hintTxt: "Order Notes",
+                                        maxlines: 4,
+                                        keyboardType: TextInputType.multiline,
+                                        myFocusNode: myFocusNode,
+                                        txtController: notesController,
+                                        checkValidator: null,
+                                        obscureTxt: false),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ],
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('${snapshot.error}');
+                          ],
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('${snapshot.error}');
+                      }
                     }
-                  }
-                  return const CircularProgressIndicator();
-                },
+                    return const CircularProgressIndicator();
+                  },
+                ),
               ),
             ),
           ),
@@ -578,77 +787,97 @@ class _OrderDetailsState extends State<OrderDetails> {
       bottomNavigationBar: Container(
         margin: const EdgeInsets.fromLTRB(15, 0, 15, 0),
         color: Colors.white,
-        height: 238,
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 15,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  "Subtotal",
-                  style: TextStyle(color: Colors.black),
-                ),
-                Text("₹ 2,750")
-              ],
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  "Tax & Fees",
-                  style: TextStyle(color: Colors.black),
-                ),
-                Text("₹ 18")
-              ],
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  "Delivery",
-                  style: TextStyle(color: Colors.black),
-                ),
-                Text("₹ 40")
-              ],
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  "Total",
-                  style: TextStyle(color: Colors.black),
-                ),
-                Text("₹ 2,808")
-              ],
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            const Divider(
-                thickness: 2,
-                color: Color.fromARGB(255, 241, 241, 241),
-                height: 1),
-            const SizedBox(
-              height: 15,
-            ),
-            SizedBox(
-                height: 55,
-                width: double.infinity,
-                child:
-                    CustomButton(buttonText: "Update Order", onPressed: () {}))
-          ],
+        height: 206,
+        child: Center(
+          child: FutureBuilder<Order>(
+            future: productData,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
+                  return Column(
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Subtotal",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          Text('₹ ${snapshot.data!.order.subtotal}')
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Tax & Fees",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          Text('₹ ${snapshot.data!.order.tax}')
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Delivery",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          Text('₹ ${snapshot.data!.order.deliveryCharge}')
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Total",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          Text('₹ ${snapshot.data!.order.totalAmount}')
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Divider(
+                          thickness: 2,
+                          color: Color.fromARGB(255, 241, 241, 241),
+                          height: 1),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        height: 55,
+                        width: double.infinity,
+                        child: CustomButton(
+                          buttonText: "Update Order",
+                          onPressed: () {
+                            print(orderStatus);
+                            print(paymentMode);
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
+              }
+              return const Center();
+            },
+          ),
         ),
       ),
     );
@@ -658,7 +887,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 Future<List<OrderItem>> orderItem() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   var orderId = preferences.getString("orderId");
-  const String apiUrl = "${apiLink}orderDetails";
+  const String apiUrl = "${apiLink}getorderDetails";
   final response =
       await http.post(Uri.parse(apiUrl), body: {"ord_id": orderId});
   if (response.statusCode == 200) {
@@ -675,17 +904,23 @@ Future<List<OrderItem>> orderItem() async {
   }
 }
 
-Future<bool> cancelOrder() async {
+Future<bool> updateOrder(
+    String notes, String ordStatus, String paymentStatus) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   var orderId = preferences.getString("orderId");
-  const String apiUrl = "${apiLink}cancelOrder";
+  const String apiUrl = "${apiLink}updateOrder";
   final response = await http.post(
     Uri.parse(apiUrl),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
     body: jsonEncode(
-      {"ord_id": orderId},
+      {
+        "order_id": orderId,
+        "order_status": ordStatus,
+        "payment_mode": paymentStatus,
+        "order_notes": notes
+      },
     ),
   );
   String jsonsDataString = response.body
@@ -701,4 +936,11 @@ Future<bool> cancelOrder() async {
     // then throw an exception.
     throw Exception('Failed to update album.');
   }
+}
+
+savePref(String custId) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  preferences.setString("custId", custId);
+  // ignore: deprecated_member_use
+  preferences.commit();
 }
