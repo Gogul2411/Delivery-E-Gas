@@ -4,6 +4,7 @@ import 'package:egas_delivery/screens/dashboard.dart';
 import 'package:egas_delivery/screens/orders.dart';
 import 'package:egas_delivery/screens/profile.dart';
 import 'package:flutter/material.dart';
+import 'package:stylish_bottom_bar/model/bar_items.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -42,37 +43,39 @@ class _HomePageState extends State<HomePage> {
         ),
         bottomNavigationBar: SizedBox(
           height: 80,
-          width: double.infinity,
+          width: double.maxFinite,
           child: StylishBottomBar(
+            option: BubbleBarOptions(
+              unselectedIconColor: Colors.black45,
+              barStyle: BubbleBarStyle.horizotnal,
+              bubbleFillStyle: BubbleFillStyle.fill,
+              borderRadius: const BorderRadius.all(
+                Radius.circular(25),
+              ),
+              opacity: 0.3,
+            ),
             items: [
-              BubbleBarItem(
+              BottomBarItem(
                   icon: const Icon(Icons.home_outlined, size: 30),
                   title: const Text('Home'),
                   backgroundColor: kPrimaryColor),
-              BubbleBarItem(
+              BottomBarItem(
                   icon: const Icon(Icons.bar_chart_sharp, size: 30),
                   title: const Text('Orders'),
                   backgroundColor: kPrimaryColor),
-              BubbleBarItem(
+              BottomBarItem(
                   icon: const Icon(Icons.account_circle_outlined, size: 30),
                   title: const Text('Profile'),
                   backgroundColor: kPrimaryColor),
             ],
-            unselectedIconColor: Colors.black45,
-            barStyle: BubbleBarStyle.horizotnal,
-            bubbleFillStyle: BubbleFillStyle.fill,
-            elevation: 0.0,
-            borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(25),
-              topLeft: Radius.circular(25),
-            ),
-            opacity: 0.3,
+            //elevation: 0.5,
+            hasNotch: true,
             backgroundColor: Colors.white,
             currentIndex: _index,
             onTap: (index) {
               if (index != _index) {
                 _navigationQueue.removeWhere((element) => element == index);
-                _navigationQueue.addLast(index!);
+                _navigationQueue.addLast(index);
                 setState(
                   () {
                     _index = index;

@@ -51,7 +51,7 @@ class _SplashState extends State<Splash> {
             ),
           ),
           body: Container(
-            color: kPrimaryColor,
+            color: Colors.white,
             child: Center(
               // ignore: avoid_unnecessary_containers
               child: Image.asset(

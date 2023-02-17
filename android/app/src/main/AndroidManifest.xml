@@ -2,7 +2,7 @@
     package="com.example.egas_delivery">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="egas_delivery"
+        android:label="E-Gas Delivery"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

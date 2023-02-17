@@ -67,165 +67,170 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: CustomAppBar(
-        appbarText: 'Sign In',
-      ),
-      resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        child: Container(
-          color: kBackground,
-          child: Padding(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: Form(
-              key: _formKey,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-                child: Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 50),
-                      Image.asset(
-                        "assets/icons/user.png",
-                        width: 280,
-                        height: 130,
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        "Welcome Back!",
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 7,
-                      ),
-                      const Text(
-                        "Sign in to your account!",
-                        style:
-                            TextStyle(fontSize: 16, color: kPrimaryLightColor),
-                      ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      CustomForm(
-                        myFocusNode: myFocusNode,
-                        obscureTxt: false,
-                        keyboardType: TextInputType.phone,
-                        txtController: mobileController,
-                        hintTxt: "Mobile Number*",
-                        labelTxt: "Mobile Number*",
-                        checkValidator: (value) {
-                          if (value?.length != 10) {
-                            return 'Please enter a valid mobile number';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      CustomForm(
-                        maxlines: 1,
-                        myFocusNode: _myFocusNode,
-                        txtController: passwordController,
-                        obscureTxt: !passwordVisibility,
-                        keyboardType: TextInputType.visiblePassword,
-                        hintTxt: "Password*",
-                        labelTxt: "Password*",
-                        icon: InkWell(
-                          onTap: () => setState(
-                            () => passwordVisibility = !passwordVisibility,
-                          ),
-                          focusNode: FocusNode(skipTraversal: true),
-                          child: Icon(
-                            passwordVisibility
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                            color: kPrimaryLightColor,
-                            size: 22,
-                          ),
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: Scaffold(
+        appBar: CustomAppBar(
+          appbarText: 'Sign In',
+        ),
+        resizeToAvoidBottomInset: false,
+        body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          reverse: true,
+          child: Container(
+            color: kBackground,
+            child: Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 50),
+                        Image.asset(
+                          "assets/icons/user.png",
+                          width: 280,
+                          height: 130,
                         ),
-                        checkValidator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter valid password';
-                          }
-                          return null;
-                        },
-                      ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: SizedBox(
-                          width: 140,
-                          child: TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              foregroundColor: kPrimaryLightColor,
-                            ),
-                            child: const Text(
-                              'Forgot Password?',
-                              textAlign: TextAlign.end,
-                              style: TextStyle(fontSize: 15),
-                            ),
-                          ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          "Welcome Back!",
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        height: 55,
-                        width: double.infinity,
-                        child: CustomButton(
-                          buttonText: 'Sign In',
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              final String mobileNumber =
-                                  mobileController.text.trim();
-                              final String password =
-                                  passwordController.text.trim();
-                              final LoginModel? user =
-                                  await loginUser(mobileNumber, password);
-                              setState(
-                                () {
-                                  _user = user;
-                                },
-                              );
-                              if (_user == null) {
-                                Fluttertoast.showToast(
-                                    msg: "Invalid Credentials",
-                                    toastLength: Toast.LENGTH_LONG,
-                                    gravity: ToastGravity.BOTTOM,
-                                    timeInSecForIosWeb: 1,
-                                    backgroundColor: Colors.red,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0);
-                              } else {
-                                savePref(
-                                    _user!.supplierCode,
-                                    _user!.name,
-                                    _user!.mobileNumber,
-                                    _user!.groupId,
-                                    _user!.dbId,
-                                    _user!.email);
-                                // ignore: use_build_context_synchronously
-                                Navigator.of(context, rootNavigator: true)
-                                    .pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                                      return const HomePage();
-                                    },
-                                  ),
-                                  (_) => false,
-                                );
-                              }
+                        const SizedBox(
+                          height: 7,
+                        ),
+                        const Text(
+                          "Sign in to your account!",
+                          style: TextStyle(color: kPrimaryLightColor),
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        CustomForm(
+                          myFocusNode: myFocusNode,
+                          obscureTxt: false,
+                          keyboardType: TextInputType.phone,
+                          txtController: mobileController,
+                          hintTxt: "Mobile Number*",
+                          labelTxt: "Mobile Number*",
+                          checkValidator: (value) {
+                            if (value?.length != 10) {
+                              return 'Please enter a valid mobile number';
                             }
+                            return null;
                           },
                         ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      )
-                    ],
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        CustomForm(
+                          maxlines: 1,
+                          myFocusNode: _myFocusNode,
+                          txtController: passwordController,
+                          obscureTxt: !passwordVisibility,
+                          keyboardType: TextInputType.visiblePassword,
+                          hintTxt: "Password*",
+                          labelTxt: "Password*",
+                          icon: InkWell(
+                            onTap: () => setState(
+                              () => passwordVisibility = !passwordVisibility,
+                            ),
+                            focusNode: FocusNode(skipTraversal: true),
+                            child: Icon(
+                              passwordVisibility
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: kPrimaryLightColor,
+                              size: 22,
+                            ),
+                          ),
+                          checkValidator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter valid password';
+                            }
+                            return null;
+                          },
+                        ),
+                        // Align(
+                        //   alignment: Alignment.topRight,
+                        //   child: SizedBox(
+                        //     width: 140,
+                        //     child: TextButton(
+                        //       onPressed: () {},
+                        //       style: TextButton.styleFrom(
+                        //         foregroundColor: kPrimaryLightColor,
+                        //       ),
+                        //       child: const Text(
+                        //         'Forgot Password?',
+                        //         textAlign: TextAlign.end,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        const SizedBox(height: 30),
+                        SizedBox(
+                          height: 55,
+                          width: double.infinity,
+                          child: CustomButton(
+                            buttonText: 'Sign In',
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                final String mobileNumber =
+                                    mobileController.text.trim();
+                                final String password =
+                                    passwordController.text.trim();
+                                final LoginModel? user =
+                                    await loginUser(mobileNumber, password);
+                                setState(
+                                  () {
+                                    _user = user;
+                                  },
+                                );
+                                if (_user == null) {
+                                  Fluttertoast.showToast(
+                                      msg: "Invalid Credentials",
+                                      toastLength: Toast.LENGTH_LONG,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white);
+                                } else {
+                                  savePref(
+                                      _user!.supplierCode,
+                                      _user!.name,
+                                      _user!.mobileNumber,
+                                      _user!.groupId,
+                                      _user!.dbId,
+                                      _user!.email);
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) {
+                                        return const HomePage();
+                                      },
+                                    ),
+                                    (_) => false,
+                                  );
+                                }
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

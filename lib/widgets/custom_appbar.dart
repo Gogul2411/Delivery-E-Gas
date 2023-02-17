@@ -6,6 +6,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
     this.onPressed,
     this.leading,
     this.automaticallyImply,
+    this.action,
     required this.appbarText,
     Key? key,
   }) : super(key: key);
@@ -14,6 +15,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
   String appbarText;
   bool? automaticallyImply;
   Widget? leading;
+  List<Widget>? action;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -22,9 +24,10 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.white,
       iconTheme: const IconThemeData(color: Colors.black),
-      elevation: 0.1,
       centerTitle: true,
+      elevation: 0.3,
       leading: leading,
+      actions: action,
       title: Align(
         alignment: Alignment.topCenter,
         child: Text(

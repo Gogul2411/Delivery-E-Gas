@@ -7,6 +7,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import 'login_screen.dart';
+
 class Products extends StatefulWidget {
   const Products({Key? key}) : super(key: key);
 
@@ -145,8 +147,11 @@ class _ProductsState extends State<Products> {
     // ignore: unused_local_variable
     Size size = MediaQuery.of(context).size;
     return WillPopScope(
-      onWillPop: () async {
-        return shouldPop;
+      onWillPop: () {
+        setState(() {
+          Navigator.pop(context, true);
+        });
+        return Future.value(true);
       },
       child: Scaffold(
         backgroundColor: Colors.grey[100],
@@ -156,10 +161,34 @@ class _ProductsState extends State<Products> {
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context, true),
           ),
+          action: [
+            IconButton(
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.remove("supplierCode");
+                prefs.remove("name");
+                prefs.remove("mobileNumber");
+                prefs.remove("groupId");
+                prefs.remove("dbId");
+                prefs.remove("email");
+                // ignore: use_build_context_synchronously
+                Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return const LoginScreen();
+                    },
+                  ),
+                  (_) => false,
+                );
+              },
+              icon: const Icon(Icons.logout_sharp),
+            ),
+          ],
         ),
-        body: SizedBox(
+        body: Container(
           width: double.infinity,
           height: double.infinity,
+          margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Column(
             children: <Widget>[
               Container(
@@ -173,9 +202,6 @@ class _ProductsState extends State<Products> {
                   itemBuilder: (ctx, index) {
                     return Column(
                       children: [
-                        const SizedBox(
-                          width: 20,
-                        ),
                         GestureDetector(
                           onTap: () {
                             setState(
@@ -219,7 +245,6 @@ class _ProductsState extends State<Products> {
               ),
               Expanded(
                 child: Container(
-                  margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: _isFirstLoadRunning
                       ? const Center(
                           child: CircularProgressIndicator(),
@@ -244,7 +269,7 @@ class _ProductsState extends State<Products> {
                                             borderRadius:
                                                 BorderRadius.circular(5),
                                           ),
-                                          elevation: 1.5,
+                                          elevation: 1,
                                           child: Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,

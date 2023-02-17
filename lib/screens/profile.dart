@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:egas_delivery/common/colors.dart';
-import 'package:egas_delivery/screens/login_screen.dart';
+import 'package:egas_delivery/model_files/profile_model.dart';
 import 'package:egas_delivery/widgets/custom_appbar.dart';
 import 'package:egas_delivery/widgets/custom_button.dart';
 import 'package:egas_delivery/widgets/custom_form.dart';
@@ -10,12 +10,14 @@ import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import 'login_screen.dart';
+
 Future<GetProfileModel> fetchAlbum() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   var deliveryboy = preferences.getString("dbId");
   const String apiUrl = "${apiLink}getProfileDB";
   final response =
-      await http.post(Uri.parse(apiUrl), body: {"cust_id": deliveryboy});
+      await http.post(Uri.parse(apiUrl), body: {"db_id": deliveryboy});
   /*String jsonsDataString = response.body
       .toString();
   var apiresbonce = jsonDecode(jsonsDataString);
@@ -74,11 +76,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Scaffold(
         appBar: CustomAppBar(
           appbarText: "Profile",
+          action: [
+            IconButton(
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.remove("supplierCode");
+                prefs.remove("name");
+                prefs.remove("mobileNumber");
+                prefs.remove("groupId");
+                prefs.remove("dbId");
+                prefs.remove("email");
+                // ignore: use_build_context_synchronously
+                Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return const LoginScreen();
+                    },
+                  ),
+                  (_) => false,
+                );
+              },
+              icon: const Icon(Icons.logout_sharp),
+            ),
+          ],
         ),
         resizeToAvoidBottomInset: false,
         body: Container(
           color: kBackground,
           child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            reverse: true,
             slivers: [
               SliverFillRemaining(
                 hasScrollBody: false,
@@ -100,13 +128,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     const SizedBox(
-                                      height: 30,
+                                      height: 20,
                                     ),
-                                    const SizedBox(
+                                    SizedBox(
                                       height: 100,
                                       width: 100,
                                       child: ProfilePicture(
-                                        name: 'Gogul',
+                                        name: snapshot.data!.name.toString(),
                                         radius: 30,
                                         fontsize: 60,
                                         random: true,
@@ -117,9 +145,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                     CustomForm(
                                         keyboardType: TextInputType.none,
+                                        maxlines: 1,
                                         formEnabled: false,
                                         myFocusNode: supplierFocusNode,
-                                        txtController: supplierController,
+                                        txtController: supplierController
+                                          ..text = snapshot.data!.supplierName,
                                         labelTxt: 'Supplier Name',
                                         hintTxt: 'Supplier Name',
                                         checkValidator: null,
@@ -130,7 +160,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     CustomForm(
                                         keyboardType: TextInputType.name,
                                         myFocusNode: nameFocusNode,
-                                        txtController: nameController,
+                                        txtController: nameController
+                                          ..text = snapshot.data!.name,
+                                        maxlines: 1,
                                         labelTxt: 'Name',
                                         hintTxt: 'Name',
                                         checkValidator: (value) {
@@ -149,7 +181,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     CustomForm(
                                         keyboardType: TextInputType.phone,
                                         myFocusNode: mobileFocusNode,
-                                        txtController: mobileController,
+                                        maxlines: 1,
+                                        txtController: mobileController
+                                          ..text = snapshot.data!.mobileNumber,
                                         labelTxt: 'Mobile Number',
                                         hintTxt: 'Mobile Number',
                                         checkValidator: (value) {
@@ -167,7 +201,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         keyboardType:
                                             TextInputType.emailAddress,
                                         myFocusNode: emailFocusNode,
-                                        txtController: emailController,
+                                        txtController: emailController
+                                          ..text = snapshot.data!.email,
+                                        maxlines: 1,
                                         labelTxt: 'Email',
                                         hintTxt: 'Email',
                                         checkValidator: (value) =>
@@ -186,6 +222,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       txtController: passwordController,
                                       labelTxt: 'Password',
                                       hintTxt: 'Password',
+                                      maxlines: 1,
                                       checkValidator: null,
                                       icon: InkWell(
                                         onTap: () => setState(
@@ -212,29 +249,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       child: CustomButton(
                                         buttonText: "Update Profile",
                                         onPressed: () async {
-                                          SharedPreferences prefs =
-                                              await SharedPreferences
-                                                  .getInstance();
-                                          prefs.remove("mobileNumber");
-                                          prefs.remove("companyName");
-                                          prefs.remove("userId");
-                                          prefs.remove("email");
-                                          // ignore: use_build_context_synchronously
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pushAndRemoveUntil(
-                                            MaterialPageRoute(
-                                              builder: (BuildContext context) {
-                                                return const LoginScreen();
-                                              },
-                                            ),
-                                            (_) => false,
-                                          );
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            final String mobileNumber =
+                                                mobileController.text.trim();
+                                            final String dbName =
+                                                nameController.text.trim();
+                                            final String email =
+                                                emailController.text.trim();
+                                            final String password =
+                                                passwordController.text.trim();
+                                            // ignore: unused_local_variable
+                                            final user = updateProfile(
+                                                mobileNumber,
+                                                dbName,
+                                                email,
+                                                password);
+                                          }
                                         },
                                       ),
                                     ),
                                     const SizedBox(
                                       height: 15,
+                                    ),
+                                    const Text(
+                                      "Version 1.0.0",
                                     ),
                                   ],
                                 ),
@@ -256,160 +295,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-  // Future<bool> updateProfile(String mobileNumber, String custName,
-  //     String supplierCode, String address, String password) async {
-  //   SharedPreferences preferences = await SharedPreferences.getInstance();
-  //   var loginStatus = preferences.getString("custId");
-  //   const String apiUrl = "${apiLink}createProfile";
-  //   final response = await http.post(
-  //     Uri.parse(apiUrl),
-  //     headers: <String, String>{
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //     },
-  //     body: jsonEncode(
-  //       {
-  //         "cust_id": loginStatus,
-  //         "cust_name": custName,
-  //         "mobile_number": mobileNumber,
-  //         "address": address,
-  //         "password": password
-  //       },
-  //     ),
-  //   );
-  //   String jsonsDataString = response.body
-  //       .toString(); // toString of Response's body is assigned to jsonDataString
-  //   // ignore: no_leading_underscores_for_local_identifiers
-  //   var _data = jsonDecode(jsonsDataString);
-  //   print(_data.toString());
-  //   if (response.statusCode == 200) {
-  //     setState(() {
-  //       // ignore: unused_local_variable
-  //       final user = savePref(
-  //         mobileNumber,
-  //         custName,
-  //         supplierCode,
-  //       );
-  //     });
-  //     setState(() {});
-  //     _futureAlbum = fetchAlbum();
-  //     getPref();
-  //     return true;
-  //   } else {
-  //     // If the server did not return a 200 OK response,
-  //     // then throw an exception.
-  //     throw Exception('Failed to update album.');
-  //   }
-  // }
 
-  // // ignore: prefer_typing_uninitialized_variables
-  // var mobileNumber;
-  // // ignore: prefer_typing_uninitialized_variables
-  // var customerName;
-  // getPref() async {
-  //   SharedPreferences preferences = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     customerName = preferences.getString("custName");
-  //     mobileNumber = preferences.getString("mobileNumber");
-  //   });
-  // }
-}
-
-// ignore: non_constant_identifier_names
-ProfileScreenModel ProfileScreenModelFromJson(String str) =>
-    ProfileScreenModel.fromJson(json.decode(str));
-
-// ignore: non_constant_identifier_names
-String ProfileScreenModelToJson(ProfileScreenModel data) =>
-    json.encode(data.toJson());
-
-class ProfileScreenModel {
-  ProfileScreenModel({
-    required this.isProfileCreated,
-    required this.status,
-    required this.message,
-  });
-
-  int isProfileCreated;
-  int status;
-  String message;
-
-  factory ProfileScreenModel.fromJson(Map<String, dynamic> json) =>
-      ProfileScreenModel(
-        isProfileCreated: json["is_profile_created"],
-        status: json["status"],
-        message: json["message"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "is_profile_created": isProfileCreated,
-        "status": status,
-        "message": message,
-      };
-}
-
-GetProfileModel getProfileModelFromJson(String str) =>
-    GetProfileModel.fromJson(json.decode(str));
-
-String getProfileModelToJson(GetProfileModel data) =>
-    json.encode(data.toJson());
-
-class GetProfileModel {
-  GetProfileModel({
-    required this.id,
-    required this.groupId,
-    required this.supplierCode,
-    required this.name,
-    required this.mobileNumber,
-    required this.email,
-    required this.group,
-  });
-
-  String id;
-  String groupId;
-  String supplierCode;
-  String name;
-  String mobileNumber;
-  String email;
-  List<Group> group;
-
-  factory GetProfileModel.fromJson(Map<String, dynamic> json) =>
-      GetProfileModel(
-        id: json["id"],
-        groupId: json["group_id"],
-        supplierCode: json["supplier_code"],
-        name: json["name"],
-        mobileNumber: json["mobile_number"],
-        email: json["email"],
-        group: List<Group>.from(json["group"].map((x) => Group.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "group_id": groupId,
-        "supplier_code": supplierCode,
-        "name": name,
-        "mobile_number": mobileNumber,
-        "email": email,
-        "group": List<dynamic>.from(group.map((x) => x.toJson())),
-      };
-}
-
-class Group {
-  Group({
-    required this.groupId,
-    required this.customersGroup,
-  });
-
-  String groupId;
-  String customersGroup;
-
-  factory Group.fromJson(Map<String, dynamic> json) => Group(
-        groupId: json["group_id"],
-        customersGroup: json["customers_group"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "group_id": groupId,
-        "customers_group": customersGroup,
-      };
+  Future<bool> updateProfile(
+      String mobileNumber, String dbName, String email, String password) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var deliveryboy = preferences.getString("dbId");
+    const String apiUrl = "${apiLink}saveProfile";
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(
+        {
+          "db_id": deliveryboy,
+          "name": dbName,
+          "mobile_number": mobileNumber,
+          "email": email,
+          "password": password
+        },
+      ),
+    );
+    String jsonsDataString = response.body
+        .toString(); // toString of Response's body is assigned to jsonDataString
+    // ignore: no_leading_underscores_for_local_identifiers
+    var _data = jsonDecode(jsonsDataString);
+    // ignore: avoid_print
+    print(_data.toString());
+    if (response.statusCode == 200) {
+      setState(() {});
+      _futureAlbum = fetchAlbum();
+      setState(() {});
+      return true;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to update album.');
+    }
+  }
 }

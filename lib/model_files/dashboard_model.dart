@@ -4,94 +4,100 @@
 
 import 'dart:convert';
 
-DashboardModel dashboardModelFromJson(String str) =>
-    DashboardModel.fromJson(json.decode(str));
+DashboardModel dashboardModelFromJson(String str) => DashboardModel.fromJson(json.decode(str));
 
 String dashboardModelToJson(DashboardModel data) => json.encode(data.toJson());
 
 class DashboardModel {
-  DashboardModel({
-    required this.deliveryboy,
-    required this.collection,
-    required this.delivered,
-    required this.pending,
-    required this.cancelled,
-    required this.orders,
-  });
+    DashboardModel({
+        required this.deliveryboy,
+        required this.collection,
+        required this.delivered,
+        required this.pending,
+        required this.cancelled,
+        required this.orders,
+    });
 
-  Deliveryboy deliveryboy;
-  int collection;
-  int delivered;
-  int pending;
-  int cancelled;
-  List<Order> orders;
+    Deliveryboy deliveryboy;
+    int collection;
+    int delivered;
+    int pending;
+    int cancelled;
+    List<Order> orders;
 
-  factory DashboardModel.fromJson(Map<String, dynamic> json) => DashboardModel(
+    factory DashboardModel.fromJson(Map<String, dynamic> json) => DashboardModel(
         deliveryboy: Deliveryboy.fromJson(json["deliveryboy"]),
         collection: json["collection"],
         delivered: json["delivered"],
         pending: json["pending"],
         cancelled: json["cancelled"],
         orders: List<Order>.from(json["orders"].map((x) => Order.fromJson(x))),
-      );
+    );
 
-  Map<String, dynamic> toJson() => {
+    Map<String, dynamic> toJson() => {
         "deliveryboy": deliveryboy.toJson(),
         "collection": collection,
         "delivered": delivered,
         "pending": pending,
         "cancelled": cancelled,
         "orders": List<dynamic>.from(orders.map((x) => x.toJson())),
-      };
+    };
 }
 
 class Deliveryboy {
-  Deliveryboy({
-    required this.supplierCode,
-    required this.name,
-  });
+    Deliveryboy({
+        required this.supplierCode,
+        required this.name,
+    });
 
-  String supplierCode;
-  String name;
+    String supplierCode;
+    String name;
 
-  factory Deliveryboy.fromJson(Map<String, dynamic> json) => Deliveryboy(
+    factory Deliveryboy.fromJson(Map<String, dynamic> json) => Deliveryboy(
         supplierCode: json["supplier_code"],
         name: json["name"],
-      );
+    );
 
-  Map<String, dynamic> toJson() => {
+    Map<String, dynamic> toJson() => {
         "supplier_code": supplierCode,
         "name": name,
-      };
+    };
 }
 
 class Order {
-  Order({
-    required this.ordId,
-    required this.address,
-    required this.orderId,
-    required this.custName,
-    required this.totalAmount,
-    required this.timeSlot,
-    required this.createdOn,
-    required this.orderStatus,
-    required this.statusLabel,
-    required this.statusColor,
-  });
+    Order({
+        required this.ordId,
+        required this.paymentMode,
+        required this.address,
+        required this.orderId,
+        required this.custName,
+        required this.totalAmount,
+        required this.timeSlot,
+        required this.createdOn,
+        required this.orderStatus,
+        required this.statusLabel,
+        required this.statusColor,
+        required this.paymentLabel,
+        required this.image,
+    });
 
-  String ordId;
-  String address;
-  String orderId;
-  String custName;
-  String totalAmount;
-  String timeSlot;
-  String createdOn;
-  String orderStatus;
-  String statusLabel;
-  String statusColor;
+    String ordId;
+    String paymentMode;
+    String address;
+    String orderId;
+    String custName;
+    String totalAmount;
+    String timeSlot;
+    String createdOn;
+    String orderStatus;
+    String statusLabel;
+    String statusColor;
+    String paymentLabel;
+    String image;
 
-  factory Order.fromJson(Map<String, dynamic> json) => Order(
+    factory Order.fromJson(Map<String, dynamic> json) => Order(
         ordId: json["ord_id"],
+        paymentMode: json["payment_mode"],
         address: json["address"],
         orderId: json["order_id"],
         custName: json["cust_name"],
@@ -101,10 +107,13 @@ class Order {
         orderStatus: json["order_status"],
         statusLabel: json["status_label"],
         statusColor: json["status_color"],
-      );
+        paymentLabel: json["payment_label"],
+        image: json["image"],
+    );
 
-  Map<String, dynamic> toJson() => {
+    Map<String, dynamic> toJson() => {
         "ord_id": ordId,
+        "payment_mode": paymentMode,
         "address": address,
         "order_id": orderId,
         "cust_name": custName,
@@ -114,5 +123,7 @@ class Order {
         "order_status": orderStatus,
         "status_label": statusLabel,
         "status_color": statusColor,
-      };
+        "payment_label": paymentLabel,
+        "image": image,
+    };
 }

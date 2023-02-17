@@ -55,9 +55,30 @@ class CustomForm extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(5),
         ),
+        disabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: kPrimaryLightColor,
+            width: 0.5,
+          ),
+          borderRadius: BorderRadius.circular(5),
+        ),
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(
             color: Colors.black,
+            width: 0.5,
+          ),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: Colors.red,
+            width: 0.5,
+          ),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: Colors.red,
             width: 0.5,
           ),
           borderRadius: BorderRadius.circular(5),
