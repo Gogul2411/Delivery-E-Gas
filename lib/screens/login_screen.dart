@@ -243,10 +243,12 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
 }
 
 Future<LoginModel?> loginUser(String mobileNumber, String password) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  var fcmKey = preferences.getString("appToken");
   const String apiUrl = "${apiLink}loginDB";
   final response = await http.post(
     Uri.parse(apiUrl),
-    body: {"mobileNumber": mobileNumber, "password": password},
+    body: {"mobileNumber": mobileNumber, "password": password, "fbid": fcmKey},
   );
   String jsonsDataString = response.body
       .toString(); // toString of Response's body is assigned to jsonDataString

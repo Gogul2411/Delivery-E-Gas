@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "563135105543",
+    "project_id": "delivery-egas",
+    "storage_bucket": "delivery-egas.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563135105543:android:604bdbc8b03db3f69438a2",
+        "android_client_info": {
+          "package_name": "com.cuteweb.egasdelivery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "563135105543-hek3nvg366drcbgd1m8lh1ud1gffpe5g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbknXbsnNuug4ERHJ4cdkLvA9PQFeNN60"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "563135105543-hek3nvg366drcbgd1m8lh1ud1gffpe5g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

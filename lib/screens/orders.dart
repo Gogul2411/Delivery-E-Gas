@@ -396,7 +396,7 @@ class _OrdersState extends State<Orders> {
                                                                 ),
                                                                 Container(
                                                                   height: 30,
-                                                                  width: 90,
+                                                                  width: 100,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     borderRadius:

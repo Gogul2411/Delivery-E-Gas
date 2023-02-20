@@ -215,7 +215,7 @@ class _ProductsState extends State<Products> {
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
                             margin: const EdgeInsets.all(10),
-                            width: 165,
+                            width: MediaQuery.of(context).size.width * 0.42,
                             height: 45,
                             decoration: BoxDecoration(
                               color: current == index ? kPrimaryColor : null,
