@@ -16,14 +16,14 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Responsive(
-      mobile: const MobileLoginScreen(),
+    return const Responsive(
+      mobile: MobileLoginScreen(),
       desktop: Row(
         children: [
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 SizedBox(
                   width: 450,
                   child: MobileLoginScreen(),
@@ -47,19 +47,17 @@ class MobileLoginScreen extends StatefulWidget {
 }
 
 class _MobileLoginScreenState extends State<MobileLoginScreen> {
-  TextEditingController mobileController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   late bool passwordVisibility;
   LoginModel? _user;
   FocusNode myFocusNode = FocusNode();
   final FocusNode _myFocusNode = FocusNode();
+  String? mobile;
+  String? password;
 
   @override
   void initState() {
     super.initState();
-    mobileController = TextEditingController();
-    passwordController = TextEditingController();
     passwordVisibility = false;
   }
 
@@ -119,7 +117,9 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                           myFocusNode: myFocusNode,
                           obscureTxt: false,
                           keyboardType: TextInputType.phone,
-                          txtController: mobileController,
+                          onChanged: (value) {
+                            mobile = value;
+                          },
                           hintTxt: "Mobile Number*",
                           labelTxt: "Mobile Number*",
                           checkValidator: (value) {
@@ -135,9 +135,11 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                         CustomForm(
                           maxlines: 1,
                           myFocusNode: _myFocusNode,
-                          txtController: passwordController,
                           obscureTxt: !passwordVisibility,
                           keyboardType: TextInputType.visiblePassword,
+                          onChanged: (value) {
+                            password = value;
+                          },
                           hintTxt: "Password*",
                           labelTxt: "Password*",
                           icon: InkWell(
@@ -184,12 +186,10 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                             buttonText: 'Sign In',
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                final String mobileNumber =
-                                    mobileController.text.trim();
-                                final String password =
-                                    passwordController.text.trim();
+                                final String mobileNumber = mobile.toString();
+                                final String pass = password.toString();
                                 final LoginModel? user =
-                                    await loginUser(mobileNumber, password);
+                                    await loginUser(mobileNumber, pass);
                                 setState(
                                   () {
                                     _user = user;
@@ -242,13 +242,13 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
   }
 }
 
-Future<LoginModel?> loginUser(String mobileNumber, String password) async {
+Future<LoginModel?> loginUser(String mobileNumber, String pass) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   var fcmKey = preferences.getString("appToken");
   const String apiUrl = "${apiLink}loginDB";
   final response = await http.post(
     Uri.parse(apiUrl),
-    body: {"mobileNumber": mobileNumber, "password": password, "fbid": fcmKey},
+    body: {"mobileNumber": mobileNumber, "password": pass, "fbid": fcmKey},
   );
   String jsonsDataString = response.body
       .toString(); // toString of Response's body is assigned to jsonDataString

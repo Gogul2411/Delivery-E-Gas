@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-
 import 'login_screen.dart';
 
 Future<GetProfileModel> fetchAlbum() async {
@@ -52,6 +51,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   FocusNode mobileFocusNode = FocusNode();
   FocusNode emailFocusNode = FocusNode();
   FocusNode passFocusNode = FocusNode();
+
+  String? mobileNumber;
+  String? dbName;
+  String? email;
+  String? password;
 
   @override
   void initState() {
@@ -105,8 +109,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           color: kBackground,
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(),
-            scrollDirection: Axis.vertical,
-            reverse: true,
             slivers: [
               SliverFillRemaining(
                 hasScrollBody: false,
@@ -148,8 +150,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         maxlines: 1,
                                         formEnabled: false,
                                         myFocusNode: supplierFocusNode,
-                                        txtController: supplierController
-                                          ..text = snapshot.data!.supplierName,
+                                        initial: snapshot.data!.supplierName,
+                                        onChanged: (value) {},
                                         labelTxt: 'Supplier Name',
                                         hintTxt: 'Supplier Name',
                                         checkValidator: null,
@@ -160,8 +162,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     CustomForm(
                                         keyboardType: TextInputType.name,
                                         myFocusNode: nameFocusNode,
-                                        txtController: nameController
-                                          ..text = snapshot.data!.name,
+                                        initial: snapshot.data!.name,
+                                        onChanged: (value) {
+                                          dbName = value;
+                                        },
                                         maxlines: 1,
                                         labelTxt: 'Name',
                                         hintTxt: 'Name',
@@ -182,8 +186,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         keyboardType: TextInputType.phone,
                                         myFocusNode: mobileFocusNode,
                                         maxlines: 1,
-                                        txtController: mobileController
-                                          ..text = snapshot.data!.mobileNumber,
+                                        initial: snapshot.data!.mobileNumber,
+                                        onChanged: (value) {
+                                          mobileNumber = value;
+                                        },
                                         labelTxt: 'Mobile Number',
                                         hintTxt: 'Mobile Number',
                                         checkValidator: (value) {
@@ -201,8 +207,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         keyboardType:
                                             TextInputType.emailAddress,
                                         myFocusNode: emailFocusNode,
-                                        txtController: emailController
-                                          ..text = snapshot.data!.email,
+                                        initial: snapshot.data!.email,
+                                        onChanged: (value) {
+                                          email = value;
+                                        },
                                         maxlines: 1,
                                         labelTxt: 'Email',
                                         hintTxt: 'Email',
@@ -219,7 +227,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           TextInputType.visiblePassword,
                                       obscureTxt: !passwordVisibility,
                                       myFocusNode: passFocusNode,
-                                      txtController: passwordController,
+                                      onChanged: (value) {
+                                        password = value;
+                                      },
                                       labelTxt: 'Password',
                                       hintTxt: 'Password',
                                       maxlines: 1,
@@ -251,20 +261,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         onPressed: () async {
                                           if (_formKey.currentState!
                                               .validate()) {
-                                            final String mobileNumber =
-                                                mobileController.text.trim();
-                                            final String dbName =
-                                                nameController.text.trim();
-                                            final String email =
-                                                emailController.text.trim();
-                                            final String password =
-                                                passwordController.text.trim();
+                                            final String mobile =
+                                                mobileNumber.toString();
+                                            final String deliveryboy =
+                                                dbName.toString();
+                                            final String gmail =
+                                                email.toString();
+                                            final String pass =
+                                                password.toString();
                                             // ignore: unused_local_variable
-                                            final user = updateProfile(
-                                                mobileNumber,
-                                                dbName,
-                                                email,
-                                                password);
+                                            final user = updateProfile(mobile,
+                                                deliveryboy, gmail, pass);
                                           }
                                         },
                                       ),
@@ -297,9 +304,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<bool> updateProfile(
-      String mobileNumber, String dbName, String email, String password) async {
+      String mobile, String deliveryboy, String gmail, String pass) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    var deliveryboy = preferences.getString("dbId");
+    var deliveryboyId = preferences.getString("dbId");
     const String apiUrl = "${apiLink}saveProfile";
     final response = await http.post(
       Uri.parse(apiUrl),
@@ -308,11 +315,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
       body: jsonEncode(
         {
-          "db_id": deliveryboy,
-          "name": dbName,
-          "mobile_number": mobileNumber,
-          "email": email,
-          "password": password
+          "db_id": deliveryboyId,
+          "name": deliveryboy,
+          "mobile_number": mobile,
+          "email": gmail,
+          "password": pass
         },
       ),
     );

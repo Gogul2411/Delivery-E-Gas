@@ -403,7 +403,7 @@ class _DashboardState extends State<Dashboard> {
                                                         ),
                                                       ),
                                                       const SizedBox(
-                                                        height: 15,
+                                                        height: 10,
                                                       ),
                                                     ],
                                                   );
@@ -415,14 +415,27 @@ class _DashboardState extends State<Dashboard> {
                                                       MainAxisAlignment.center,
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
-                                                  children: const [
-                                                    Text(
+                                                  children: [
+                                                    Image.asset(
+                                                      "assets/images/empty-orders.png",
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.15,
+                                                    ),
+                                                    SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.01,
+                                                    ),
+                                                    const Text(
                                                       'No Orders Found!',
                                                       style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
                                                           color: Colors.black,
-                                                          fontSize: 25),
+                                                          fontSize: 20),
                                                     ),
                                                   ],
                                                 ),
@@ -461,7 +474,7 @@ Future<List<Order>> ordersList() async {
   const String apiUrl = "${apiLink}dashboardDB";
   final response = await http.post(
     Uri.parse(apiUrl),
-    body: {"db_id": deliveryboyId, "type": "Last 3 Months"},
+    body: {"db_id": deliveryboyId, "type": "This Month"},
   );
   if (response.statusCode == 200) {
     List jsonResponse = json.decode(response.body)['orders'];
@@ -483,7 +496,7 @@ Future<DashboardModel> data() async {
   const String apiUrl = "${apiLink}dashboardDB";
   final response = await http.post(
     Uri.parse(apiUrl),
-    body: {"db_id": deliveryboyId, "type": "Today"},
+    body: {"db_id": deliveryboyId, "type": "This Month"},
   );
   String jsonsDataString = response.body
       .toString(); // toString of Response's body is assigned to jsonDataString

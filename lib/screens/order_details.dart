@@ -9,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'products.dart';
-
 Future<OrderDetailsModel> ordersList() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   var orderId = preferences.getString("orderId");
@@ -47,6 +45,9 @@ class _OrderDetailsState extends State<OrderDetails> {
   late Future<OrderDetailsModel> productData;
   late Future<List<OrderItem>> _orderItem;
   FocusNode focusNode = FocusNode();
+  String? orderStatus;
+  String? paymentMode;
+  String? orderNotes;
 
   @override
   void initState() {
@@ -57,8 +58,11 @@ class _OrderDetailsState extends State<OrderDetails> {
     notesController = TextEditingController();
   }
 
-  String? orderStatus;
-  String? paymentMode;
+  @override
+  void dispose() {
+    notesController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -273,13 +277,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           color: Color.fromARGB(
                                               255, 213, 236, 255),
                                         ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              8, 0, 8, 0),
+                                        child: const Padding(
+                                          padding:
+                                              EdgeInsets.fromLTRB(8, 0, 8, 0),
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
-                                            children: const [
+                                            children: [
                                               Text(
                                                 'Items',
                                                 style: TextStyle(fontSize: 16),
@@ -364,53 +368,55 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           color: Color.fromARGB(
                                               255, 241, 241, 241),
                                           height: 1),
-                                      Builder(builder: (context) {
-                                        return snapshot.data!.order
-                                                        .statusLabel !=
-                                                    'Delivered' &&
-                                                snapshot.data!.order
-                                                        .statusLabel !=
-                                                    'Cancelled'
-                                            ? Align(
-                                                alignment: Alignment.topLeft,
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    final custId = snapshot
-                                                        .data!.order.custId;
-                                                    // ignore: unused_local_variable
-                                                    final user =
-                                                        savePref(custId);
-                                                    Navigator.of(context)
-                                                        .push(
-                                                          MaterialPageRoute(
-                                                            builder: (_) =>
-                                                                const Products(),
-                                                          ),
-                                                        )
-                                                        .then((val) => val
-                                                            ? setState(
-                                                                () {
-                                                                  productData =
-                                                                      ordersList();
-                                                                  _orderItem =
-                                                                      orderItem();
-                                                                },
-                                                              )
-                                                            : null);
-                                                  },
-                                                  style: TextButton.styleFrom(
-                                                    foregroundColor:
-                                                        kPrimaryColor,
+                                      /*Builder(
+                                        builder: (context) {
+                                          return snapshot.data!.order
+                                                          .statusLabel !=
+                                                      'Delivered' &&
+                                                  snapshot.data!.order
+                                                          .statusLabel !=
+                                                      'Cancelled'
+                                              ? Align(
+                                                  alignment: Alignment.topLeft,
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      final custId = snapshot
+                                                          .data!.order.custId;
+                                                      // ignore: unused_local_variable
+                                                      final user =
+                                                          savePref(custId);
+                                                      Navigator.of(context)
+                                                          .push(
+                                                            MaterialPageRoute(
+                                                              builder: (_) =>
+                                                                  const Products(),
+                                                            ),
+                                                          )
+                                                          .then((val) => val
+                                                              ? setState(
+                                                                  () {
+                                                                    productData =
+                                                                        ordersList();
+                                                                    _orderItem =
+                                                                        orderItem();
+                                                                  },
+                                                                )
+                                                              : null);
+                                                    },
+                                                    style: TextButton.styleFrom(
+                                                      foregroundColor:
+                                                          kPrimaryColor,
+                                                    ),
+                                                    child: const Text(
+                                                      'Add more items',
+                                                      style: TextStyle(
+                                                          fontSize: 13),
+                                                    ),
                                                   ),
-                                                  child: const Text(
-                                                    'Add more items',
-                                                    style:
-                                                        TextStyle(fontSize: 13),
-                                                  ),
-                                                ),
-                                              )
-                                            : const Center();
-                                      }),
+                                                )
+                                              : const Center();
+                                        },
+                                      ),*/
                                     ],
                                   ),
                                 ),
@@ -586,8 +592,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 TextInputType.multiline,
                                             maxlines: 4,
                                             myFocusNode: focusNode,
-                                            txtController: notesController,
+                                            initial:
+                                                snapshot.data!.order.orderNotes,
                                             hintTxt: 'Notes',
+                                            onChanged: (value) {
+                                              orderNotes = value;
+                                            },
                                             checkValidator: null,
                                             obscureTxt: false),
                                       ],
@@ -702,8 +712,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       orderStatus.toString();
                                   final String payStatus =
                                       paymentMode.toString();
-                                  final String notes =
-                                      notesController.text.trim();
+                                  final String notes = orderNotes.toString();
                                   // ignore: unused_local_variable
                                   final user = updateOrder(
                                     notes,

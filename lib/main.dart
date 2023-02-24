@@ -62,13 +62,15 @@ class _MyAppState extends State {
   }
 
   void getToken() async {
-    await FirebaseMessaging.instance.getToken().then((token) {
-      setState(() {
-        mtoken = token;
-        print("my token is : $mtoken");
-      });
-      saveToken(token!);
-    });
+    await FirebaseMessaging.instance.getToken().then(
+      (token) {
+        setState(() {
+          mtoken = token;
+          print("my token is : $mtoken");
+        });
+        saveToken(token!);
+      },
+    );
   }
 
   // This widget is the root of your application.

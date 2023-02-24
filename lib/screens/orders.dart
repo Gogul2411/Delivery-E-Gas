@@ -61,9 +61,11 @@ class _OrdersState extends State<Orders> {
               },
             );
           } else {
-            setState(() {
-              _hasNextPage = false;
-            });
+            setState(
+              () {
+                _hasNextPage = false;
+              },
+            );
           }
         } else {
           throw Exception('Unexpected error occured!');
@@ -455,7 +457,7 @@ class _OrdersState extends State<Orders> {
                                                     },
                                                   ),
                                                   const SizedBox(
-                                                    height: 15,
+                                                    height: 10,
                                                   ),
                                                 ],
                                               );

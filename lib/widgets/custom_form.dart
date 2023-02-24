@@ -7,28 +7,30 @@ class CustomForm extends StatelessWidget {
     Key? key,
     required this.keyboardType,
     required this.myFocusNode,
-    required this.txtController,
     this.hintTxt,
     this.labelTxt,
     this.icon,
     this.formEnabled,
     this.iconData,
     this.maxlines,
+    this.onChanged,
+    this.initial,
     required this.checkValidator,
     required this.obscureTxt,
   }) : super(key: key);
 
   final FocusNode myFocusNode;
-  final TextEditingController txtController;
   final TextInputType keyboardType;
   final bool obscureTxt;
   bool? formEnabled;
   Icon? iconData;
   String? labelTxt;
   String? hintTxt;
+  String? initial;
   String? Function(String?)? checkValidator;
   Widget? icon;
   int? maxlines;
+  void Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +40,9 @@ class CustomForm extends StatelessWidget {
       focusNode: myFocusNode,
       cursorColor: Colors.black,
       obscureText: obscureTxt,
-      controller: txtController,
+      initialValue: initial,
       keyboardType: keyboardType,
+      onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hintTxt,
         hintStyle: const TextStyle(color: kPrimaryLightColor),
