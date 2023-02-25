@@ -15,6 +15,7 @@ class CustomForm extends StatelessWidget {
     this.maxlines,
     this.onChanged,
     this.initial,
+    this.controller,
     required this.checkValidator,
     required this.obscureTxt,
   }) : super(key: key);
@@ -30,6 +31,7 @@ class CustomForm extends StatelessWidget {
   String? Function(String?)? checkValidator;
   Widget? icon;
   int? maxlines;
+  TextEditingController? controller;
   void Function(String)? onChanged;
 
   @override
@@ -40,6 +42,7 @@ class CustomForm extends StatelessWidget {
       focusNode: myFocusNode,
       cursorColor: Colors.black,
       obscureText: obscureTxt,
+      controller: controller,
       initialValue: initial,
       keyboardType: keyboardType,
       onChanged: onChanged,

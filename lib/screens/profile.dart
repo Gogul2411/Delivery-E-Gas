@@ -38,10 +38,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  TextEditingController supplierController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController mobileController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   late bool passwordVisibility;
@@ -52,19 +48,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   FocusNode emailFocusNode = FocusNode();
   FocusNode passFocusNode = FocusNode();
 
-  String? mobileNumber;
-  String? dbName;
-  String? email;
-  String? password;
-
   @override
   void initState() {
-    _futureAlbum = fetchAlbum();
-    supplierController = TextEditingController();
-    nameController = TextEditingController();
-    mobileController = TextEditingController();
-    emailController = TextEditingController();
     passwordController = TextEditingController();
+    _futureAlbum = fetchAlbum();
     passwordVisibility = false;
     super.initState();
   }
@@ -121,6 +108,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           if (snapshot.hasData) {
+                            String? mobileNumber = snapshot.data!.mobileNumber;
+                            String? dbName = snapshot.data!.name;
+                            String? email = snapshot.data!.email;
+
                             return Form(
                               key: _formKey,
                               child: Padding(
@@ -227,9 +218,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           TextInputType.visiblePassword,
                                       obscureTxt: !passwordVisibility,
                                       myFocusNode: passFocusNode,
-                                      onChanged: (value) {
-                                        password = value;
-                                      },
+                                      controller: passwordController,
                                       labelTxt: 'Password',
                                       hintTxt: 'Password',
                                       maxlines: 1,
@@ -268,7 +257,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             final String gmail =
                                                 email.toString();
                                             final String pass =
-                                                password.toString();
+                                                passwordController.text.trim();
                                             // ignore: unused_local_variable
                                             final user = updateProfile(mobile,
                                                 deliveryboy, gmail, pass);
@@ -331,6 +320,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     print(_data.toString());
     if (response.statusCode == 200) {
       setState(() {});
+      passwordController = TextEditingController();
       _futureAlbum = fetchAlbum();
       setState(() {});
       return true;
