@@ -48,7 +48,7 @@ class _ProductsState extends State<Products> {
         final res = await http.post(
           Uri.parse(_baseUrl),
           body: {
-            "cust_id": "1",
+            "cust_id": custId,
             "cat_id": catId[current].toString(),
             "from": _page.toString(),
             "limit": _limit.toString()
@@ -98,7 +98,7 @@ class _ProductsState extends State<Products> {
       final res = await http.post(
         Uri.parse(_baseUrl),
         body: {
-          "cust_id": "1",
+          "cust_id": custId,
           "cat_id": catId[current].toString(),
           "from": _page.toString(),
           "limit": _limit.toString()
