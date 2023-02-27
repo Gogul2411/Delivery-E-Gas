@@ -1,12 +1,11 @@
 import 'dart:collection';
 import 'package:egas_delivery/common/colors.dart';
 import 'package:egas_delivery/screens/orders.dart';
+import 'package:egas_delivery/screens/products.dart';
 import 'package:egas_delivery/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:stylish_bottom_bar/model/bar_items.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
-
-import 'dashboard.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -19,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   final ListQueue<int> _navigationQueue = ListQueue();
   int _index = 0;
   static const List<Widget> _widgetOptions = <Widget>[
-    Dashboard(),
+    Products(),
     Orders(),
     ProfileScreen()
   ];
