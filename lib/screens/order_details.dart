@@ -277,13 +277,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           color: Color.fromARGB(
                                               255, 213, 236, 255),
                                         ),
-                                        child: const Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              8, 0, 8, 0),
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
-                                            children: [
+                                            children: const [
                                               Text(
                                                 'Items',
                                                 style: TextStyle(fontSize: 16),
