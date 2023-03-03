@@ -16,14 +16,14 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Responsive(
-      mobile: const MobileLoginScreen(),
+    return const Responsive(
+      mobile: MobileLoginScreen(),
       desktop: Row(
         children: [
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 SizedBox(
                   width: 450,
                   child: MobileLoginScreen(),
