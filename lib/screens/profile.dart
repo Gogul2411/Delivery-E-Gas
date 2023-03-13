@@ -40,7 +40,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  late bool passwordVisibility;
   late Future<GetProfileModel> _futureAlbum;
   FocusNode supplierFocusNode = FocusNode();
   FocusNode nameFocusNode = FocusNode();
@@ -52,7 +51,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     passwordController = TextEditingController();
     _futureAlbum = fetchAlbum();
-    passwordVisibility = false;
     super.initState();
   }
 
@@ -196,7 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     CustomForm(
                                       keyboardType:
                                           TextInputType.visiblePassword,
-                                      obscureTxt: !passwordVisibility,
+                                      obscureTxt: false,
                                       myFocusNode: passFocusNode,
                                       controller: passwordController,
                                       labelTxt: 'Password',
