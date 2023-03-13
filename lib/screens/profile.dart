@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'login_screen.dart';
+import '../widgets/logout.dart';
 
 Future<GetProfileModel> fetchAlbum() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -67,28 +67,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Scaffold(
         appBar: CustomAppBar(
           appbarText: "Profile",
-          action: [
-            IconButton(
-              onPressed: () async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.remove("supplierCode");
-                prefs.remove("name");
-                prefs.remove("mobileNumber");
-                prefs.remove("groupId");
-                prefs.remove("dbId");
-                prefs.remove("email");
-                // ignore: use_build_context_synchronously
-                Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return const LoginScreen();
-                    },
-                  ),
-                  (_) => false,
-                );
-              },
-              icon: const Icon(Icons.logout_sharp),
-            ),
+          action: const [
+            logout(),
           ],
         ),
         resizeToAvoidBottomInset: false,
@@ -223,21 +203,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       hintTxt: 'Password',
                                       maxlines: 1,
                                       checkValidator: null,
-                                      icon: InkWell(
-                                        onTap: () => setState(
-                                          () => passwordVisibility =
-                                              !passwordVisibility,
-                                        ),
-                                        focusNode:
-                                            FocusNode(skipTraversal: true),
-                                        child: Icon(
-                                          passwordVisibility
-                                              ? Icons.visibility_outlined
-                                              : Icons.visibility_off_outlined,
-                                          color: const Color(0xFF95A1AC),
-                                          size: 22,
-                                        ),
-                                      ),
                                     ),
                                     const SizedBox(
                                       height: 15,
@@ -319,10 +284,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // ignore: avoid_print
     print(_data.toString());
     if (response.statusCode == 200) {
-      setState(() {});
-      passwordController = TextEditingController();
-      _futureAlbum = fetchAlbum();
-      setState(() {});
+      setState(() {
+        passwordController = TextEditingController();
+        _futureAlbum = fetchAlbum();
+      });
       return true;
     } else {
       // If the server did not return a 200 OK response,

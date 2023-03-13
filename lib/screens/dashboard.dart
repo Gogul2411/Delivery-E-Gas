@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:egas_delivery/common/colors.dart';
 import 'package:egas_delivery/model_files/dashboard_model.dart';
-import 'package:egas_delivery/screens/login_screen.dart';
 import 'package:egas_delivery/screens/order_details.dart';
 import 'package:egas_delivery/widgets/custom_appbar.dart';
 import 'package:egas_delivery/widgets/custom_container.dart';
+import 'package:egas_delivery/widgets/logout.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -36,28 +36,8 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       appBar: CustomAppBar(
         appbarText: "Dashboard",
-        action: [
-          IconButton(
-            onPressed: () async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              prefs.remove("supplierCode");
-              prefs.remove("name");
-              prefs.remove("mobileNumber");
-              prefs.remove("groupId");
-              prefs.remove("dbId");
-              prefs.remove("email");
-              // ignore: use_build_context_synchronously
-              Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return const LoginScreen();
-                  },
-                ),
-                (_) => false,
-              );
-            },
-            icon: const Icon(Icons.logout_sharp),
-          ),
+        action: const [
+          logout(),
         ],
       ),
       body: SizedBox(

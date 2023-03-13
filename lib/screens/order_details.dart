@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'package:egas_delivery/common/colors.dart';
 import 'package:egas_delivery/model_files/order_details_model.dart';
-import 'package:egas_delivery/screens/login_screen.dart';
 import 'package:egas_delivery/widgets/custom_appbar.dart';
 import 'package:egas_delivery/widgets/custom_button.dart';
 import 'package:egas_delivery/widgets/custom_form.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../widgets/logout.dart';
 
 Future<OrderDetailsModel> ordersList() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -88,29 +89,8 @@ class _OrderDetailsState extends State<OrderDetails> {
               icon: const Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context, true),
             ),
-            action: [
-              IconButton(
-                onPressed: () async {
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  prefs.remove("supplierCode");
-                  prefs.remove("name");
-                  prefs.remove("mobileNumber");
-                  prefs.remove("groupId");
-                  prefs.remove("dbId");
-                  prefs.remove("email");
-                  // ignore: use_build_context_synchronously
-                  Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return const LoginScreen();
-                      },
-                    ),
-                    (_) => false,
-                  );
-                },
-                icon: const Icon(Icons.logout_sharp),
-              ),
+            action: const [
+              logout(),
             ],
           ),
           resizeToAvoidBottomInset: true,

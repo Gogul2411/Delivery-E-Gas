@@ -200,10 +200,8 @@ class Supplier {
         required this.mobileNumber,
         required this.gstNumber,
         required this.supplierLogo,
-        required this.addressLine1,
-        required this.addressLine2,
+        required this.address,
         required this.city,
-        required this.pincode,
     });
 
     String supplierCode;
@@ -212,10 +210,8 @@ class Supplier {
     String mobileNumber;
     String gstNumber;
     String supplierLogo;
-    String addressLine1;
-    String addressLine2;
+    String address;
     String city;
-    String pincode;
 
     factory Supplier.fromJson(Map<String, dynamic> json) => Supplier(
         supplierCode: json["supplier_code"],
@@ -224,10 +220,8 @@ class Supplier {
         mobileNumber: json["mobile_number"],
         gstNumber: json["gst_number"],
         supplierLogo: json["supplier_logo"],
-        addressLine1: json["address_line1"],
-        addressLine2: json["address_line2"],
+        address: json["address"],
         city: json["city"],
-        pincode: json["pincode"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -237,9 +231,7 @@ class Supplier {
         "mobile_number": mobileNumber,
         "gst_number": gstNumber,
         "supplier_logo": supplierLogo,
-        "address_line1": addressLine1,
-        "address_line2": addressLine2,
+        "address": address,
         "city": city,
-        "pincode": pincode,
     };
 }
