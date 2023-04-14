@@ -62,193 +62,195 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
-      child: Scaffold(
-        appBar: CustomAppBar(
-          appbarText: "Profile",
-          action: const [
-            logout(),
-          ],
-        ),
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          color: kBackground,
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: Center(
-                    child: FutureBuilder<GetProfileModel>(
-                      future: _futureAlbum,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          if (snapshot.hasData) {
-                            String? mobileNumber = snapshot.data!.mobileNumber;
-                            String? dbName = snapshot.data!.name;
-                            String? email = snapshot.data!.email;
-
-                            return Form(
-                              key: _formKey,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(30, 0, 30, 0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    SizedBox(
-                                      height: 100,
-                                      width: 100,
-                                      child: ProfilePicture(
-                                        name: snapshot.data!.name.toString(),
-                                        radius: 30,
-                                        fontsize: 60,
-                                        random: true,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: CustomAppBar(
+            appbarText: "Profile",
+            action: const [
+              logout(),
+            ],
+          ),
+          resizeToAvoidBottomInset: false,
+          body: Container(
+            color: kBackground,
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom),
+                    child: Center(
+                      child: FutureBuilder<GetProfileModel>(
+                        future: _futureAlbum,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.done) {
+                            if (snapshot.hasData) {
+                              String? mobileNumber = snapshot.data!.mobileNumber;
+                              String? dbName = snapshot.data!.name;
+                              String? email = snapshot.data!.email;
+      
+                              return Form(
+                                key: _formKey,
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const SizedBox(
+                                        height: 20,
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 30,
-                                    ),
-                                    CustomForm(
-                                        keyboardType: TextInputType.none,
-                                        maxlines: 1,
-                                        formEnabled: false,
-                                        myFocusNode: supplierFocusNode,
-                                        initial: snapshot.data!.supplierName,
-                                        onChanged: (value) {},
-                                        labelTxt: 'Supplier Name',
-                                        hintTxt: 'Supplier Name',
-                                        checkValidator: null,
-                                        obscureTxt: false),
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    CustomForm(
-                                        keyboardType: TextInputType.name,
-                                        myFocusNode: nameFocusNode,
-                                        initial: snapshot.data!.name,
-                                        onChanged: (value) {
-                                          dbName = value;
-                                        },
-                                        maxlines: 1,
-                                        labelTxt: 'Name',
-                                        hintTxt: 'Name',
-                                        checkValidator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter name';
-                                          } else if (value.length < 3) {
-                                            return 'Name should contain more than 3 characters';
-                                          } else {
-                                            return null;
-                                          }
-                                        },
-                                        obscureTxt: false),
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    CustomForm(
-                                        keyboardType: TextInputType.phone,
-                                        myFocusNode: mobileFocusNode,
-                                        maxlines: 1,
-                                        initial: snapshot.data!.mobileNumber,
-                                        onChanged: (value) {
-                                          mobileNumber = value;
-                                        },
-                                        labelTxt: 'Mobile Number',
-                                        hintTxt: 'Mobile Number',
-                                        checkValidator: (value) {
-                                          if (value?.length != 10) {
-                                            return 'Please enter a valid mobile number';
-                                          } else {
-                                            return null;
-                                          }
-                                        },
-                                        obscureTxt: false),
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    CustomForm(
+                                      SizedBox(
+                                        height: 100,
+                                        width: 100,
+                                        child: ProfilePicture(
+                                          name: snapshot.data!.name.toString(),
+                                          radius: 30,
+                                          fontsize: 65,
+                                          random: true,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 30,
+                                      ),
+                                      CustomForm(
+                                          keyboardType: TextInputType.none,
+                                          maxlines: 1,
+                                          formEnabled: false,
+                                          myFocusNode: supplierFocusNode,
+                                          initial: snapshot.data!.supplierName,
+                                          onChanged: (value) {},
+                                          labelTxt: 'Supplier Name',
+                                          hintTxt: 'Supplier Name',
+                                          checkValidator: null,
+                                          obscureTxt: false),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      CustomForm(
+                                          keyboardType: TextInputType.name,
+                                          myFocusNode: nameFocusNode,
+                                          initial: snapshot.data!.name,
+                                          onChanged: (value) {
+                                            dbName = value;
+                                          },
+                                          maxlines: 1,
+                                          labelTxt: 'Name',
+                                          hintTxt: 'Name',
+                                          checkValidator: (value) {
+                                            if (value == null || value.isEmpty) {
+                                              return 'Please enter name';
+                                            } else if (value.length < 3) {
+                                              return 'Name should contain more than 3 characters';
+                                            } else {
+                                              return null;
+                                            }
+                                          },
+                                          obscureTxt: false),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      CustomForm(
+                                          keyboardType: TextInputType.phone,
+                                          myFocusNode: mobileFocusNode,
+                                          maxlines: 1,
+                                          initial: snapshot.data!.mobileNumber,
+                                          onChanged: (value) {
+                                            mobileNumber = value;
+                                          },
+                                          labelTxt: 'Mobile Number',
+                                          hintTxt: 'Mobile Number',
+                                          checkValidator: (value) {
+                                            if (value?.length != 10) {
+                                              return 'Please enter a valid mobile number';
+                                            } else {
+                                              return null;
+                                            }
+                                          },
+                                          obscureTxt: false),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      CustomForm(
+                                          keyboardType:
+                                              TextInputType.emailAddress,
+                                          myFocusNode: emailFocusNode,
+                                          initial: snapshot.data!.email,
+                                          onChanged: (value) {
+                                            email = value;
+                                          },
+                                          maxlines: 1,
+                                          labelTxt: 'Email',
+                                          hintTxt: 'Email',
+                                          checkValidator: (value) =>
+                                              EmailValidator.validate(value!)
+                                                  ? null
+                                                  : "Please enter a valid email",
+                                          obscureTxt: false),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      CustomForm(
                                         keyboardType:
-                                            TextInputType.emailAddress,
-                                        myFocusNode: emailFocusNode,
-                                        initial: snapshot.data!.email,
-                                        onChanged: (value) {
-                                          email = value;
-                                        },
+                                            TextInputType.visiblePassword,
+                                        obscureTxt: false,
+                                        myFocusNode: passFocusNode,
+                                        controller: passwordController,
+                                        labelTxt: 'Password',
+                                        hintTxt: 'Password',
                                         maxlines: 1,
-                                        labelTxt: 'Email',
-                                        hintTxt: 'Email',
-                                        checkValidator: (value) =>
-                                            EmailValidator.validate(value!)
-                                                ? null
-                                                : "Please enter a valid email",
-                                        obscureTxt: false),
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    CustomForm(
-                                      keyboardType:
-                                          TextInputType.visiblePassword,
-                                      obscureTxt: false,
-                                      myFocusNode: passFocusNode,
-                                      controller: passwordController,
-                                      labelTxt: 'Password',
-                                      hintTxt: 'Password',
-                                      maxlines: 1,
-                                      checkValidator: null,
-                                    ),
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    SizedBox(
-                                      width: double.infinity,
-                                      height: 55.0,
-                                      child: CustomButton(
-                                        buttonText: "Update Profile",
-                                        onPressed: () async {
-                                          if (_formKey.currentState!
-                                              .validate()) {
-                                            final String mobile =
-                                                mobileNumber.toString();
-                                            final String deliveryboy =
-                                                dbName.toString();
-                                            final String gmail =
-                                                email.toString();
-                                            final String pass =
-                                                passwordController.text.trim();
-                                            // ignore: unused_local_variable
-                                            final user = updateProfile(mobile,
-                                                deliveryboy, gmail, pass);
-                                          }
-                                        },
+                                        checkValidator: null,
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    const Text(
-                                      "Version 1.0.0",
-                                    ),
-                                  ],
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        height: 65,
+                                        child: CustomButton(
+                                          buttonText: "Update Profile",
+                                          onPressed: () async {
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              final String mobile =
+                                                  mobileNumber.toString();
+                                              final String deliveryboy =
+                                                  dbName.toString();
+                                              final String gmail =
+                                                  email.toString();
+                                              final String pass =
+                                                  passwordController.text.trim();
+                                              // ignore: unused_local_variable
+                                              final user = updateProfile(mobile,
+                                                  deliveryboy, gmail, pass);
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      const Text(
+                                        "Version 1.0.0",
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('${snapshot.error}');
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('${snapshot.error}');
+                            }
                           }
-                        }
-                        return const CircularProgressIndicator();
-                      },
+                          return const CircularProgressIndicator();
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

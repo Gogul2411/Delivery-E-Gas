@@ -26,8 +26,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
-    Size size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         if (_navigationQueue.isEmpty) return true;
@@ -47,6 +45,7 @@ class _HomePageState extends State<HomePage> {
           width: double.maxFinite,
           child: StylishBottomBar(
             option: BubbleBarOptions(
+              padding: const EdgeInsets.all(10),
               unselectedIconColor: Colors.black45,
               barStyle: BubbleBarStyle.horizotnal,
               bubbleFillStyle: BubbleFillStyle.fill,
@@ -57,16 +56,16 @@ class _HomePageState extends State<HomePage> {
             ),
             items: [
               BottomBarItem(
-                  icon: const Icon(Icons.home_outlined, size: 30),
-                  title: const Text('Home'),
+                  icon: const Icon(Icons.home_outlined, size: 40),
+                  title: const Text('Home',style: TextStyle(fontSize: 16),),
                   backgroundColor: kPrimaryColor),
               BottomBarItem(
-                  icon: const Icon(Icons.bar_chart_sharp, size: 30),
-                  title: const Text('Orders'),
+                  icon: const Icon(Icons.bar_chart_sharp, size: 40),
+                  title: const Text('Orders',style: TextStyle(fontSize: 16),),
                   backgroundColor: kPrimaryColor),
               BottomBarItem(
-                  icon: const Icon(Icons.account_circle_outlined, size: 30),
-                  title: const Text('Profile'),
+                  icon: const Icon(Icons.account_circle_outlined, size: 40),
+                  title: const Text('Profile',style: TextStyle(fontSize: 16),),
                   backgroundColor: kPrimaryColor),
             ],
             //elevation: 0.5,

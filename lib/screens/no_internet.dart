@@ -1,3 +1,4 @@
+import 'package:egas_delivery/common/colors.dart';
 import 'package:flutter/material.dart';
 
 class NoInternet extends StatelessWidget {
@@ -6,7 +7,7 @@ class NoInternet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[200],
+      color: kBackground,
       child: Center(
         child: Image.asset(
           "assets/images/no_internet.gif",

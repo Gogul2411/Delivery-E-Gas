@@ -11,6 +11,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase_options.dart';
@@ -88,6 +89,19 @@ class _MyAppState extends State {
         return const NoInternet();
     }
     return MaterialApp(
+      builder: (context, child) => ResponsiveWrapper.builder(
+        BouncingScrollWrapper.builder(context, child!),
+        maxWidth: 480,
+        minWidth: 450,
+        defaultScale: true,
+        breakpoints: [
+          const ResponsiveBreakpoint.resize(450, name: MOBILE),
+          const ResponsiveBreakpoint.autoScale(800, name: TABLET),
+          const ResponsiveBreakpoint.autoScale(1000, name: TABLET),
+          const ResponsiveBreakpoint.resize(1200, name: DESKTOP),
+          const ResponsiveBreakpoint.autoScale(2460, name: "4K"),
+        ],
+      ),
       debugShowCheckedModeBanner: false,
       title: 'egas delivery',
       theme: ThemeData(

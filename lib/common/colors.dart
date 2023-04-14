@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const kPrimaryColor = Color(0xFF2d297c);
-const kBackground = Color.fromARGB(255, 247, 247, 247);
+const kBackground = Color(0xFFF7F7F7);
 const decorationColor = Color(0x00effbf9);
 const kPrimaryLightColor = Color(0xFFb1b1b1);
 const apiLink = "https://e-gas.in/api/";

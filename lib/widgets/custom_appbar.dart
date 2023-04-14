@@ -32,7 +32,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
         alignment: Alignment.topCenter,
         child: Text(
           appbarText,
-          style: const TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.black, fontSize: 22),
         ),
       ),
       shape: const RoundedRectangleBorder(

@@ -29,10 +29,6 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
-    double width = MediaQuery.of(context).size.width;
-    // ignore: unused_local_variable
-    double height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: CustomAppBar(
         appbarText: "Dashboard",
@@ -40,23 +36,23 @@ class _DashboardState extends State<Dashboard> {
           logout(),
         ],
       ),
-      body: SizedBox(
-        height: double.infinity,
-        width: double.infinity,
-        child: Center(
-          child: FutureBuilder<DashboardModel>(
-            future: dashList,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasData) {
-                  return Container(
-                    height: double.infinity,
-                    color: kBackground,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                        child: Column(
+      body: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              SliverFillRemaining(
+              hasScrollBody: false,
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+              color: kBackground,
+              height: double.infinity,
+              width: double.infinity,
+              child: Center(
+                child: FutureBuilder<DashboardModel>(
+                  future: dashList,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.hasData) {
+                        return Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -74,33 +70,28 @@ class _DashboardState extends State<Dashboard> {
                                 ],
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.all(14),
+                                padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
                                 child: Column(
                                   children: [
                                     Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children: [
                                         DashContainer(
-                                          containerColor: const Color.fromARGB(
-                                              255, 227, 252, 246),
+                                          containerColor: const Color(0xFFE3FCF6),
                                           iconData: const Icon(
                                             Icons.check_circle_outline_outlined,
+                                            size: 30,
                                             color: Color(0xFF27d7af),
                                           ),
                                           statusText: "Complete Delivery",
                                           countText: snapshot.data!.delivered
                                               .toString(),
                                         ),
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.04,
-                                        ),
                                         DashContainer(
-                                          containerColor: const Color.fromARGB(
-                                              237, 253, 248, 232),
+                                          containerColor: const Color(0xECFDF8E8),
                                           iconData: const Icon(
                                             Icons.pending_actions,
+                                            size: 30,
                                             color: Color(0xFFdfbb41),
                                           ),
                                           statusText: "Pending Delivery",
@@ -109,35 +100,29 @@ class _DashboardState extends State<Dashboard> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height:
-                                          MediaQuery.of(context).size.height *
-                                              0.017,
+                                          15,
                                     ),
                                     Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children: [
                                         DashContainer(
-                                          containerColor: const Color.fromARGB(
-                                              255, 253, 230, 238),
+                                          containerColor: const Color(0xFFFDE6EE),
                                           iconData: const Icon(
                                             Icons.cancel_outlined,
+                                            size: 30,
                                             color: Color(0xFFf03e7a),
                                           ),
                                           statusText: "Cancel Delivery",
                                           countText: snapshot.data!.cancelled
                                               .toString(),
                                         ),
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.04,
-                                        ),
                                         DashContainer(
-                                          containerColor: const Color.fromARGB(
-                                              255, 228, 243, 255),
+                                          containerColor: const Color(0xFFE4F3FF),
                                           iconData: const Icon(
                                             Icons.input_outlined,
+                                            size: 30,
                                             color: Color(0xFF5ba0db),
                                           ),
                                           statusText: "Collections",
@@ -159,11 +144,11 @@ class _DashboardState extends State<Dashboard> {
                                 "Recent Orders",
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500),
+                                    fontSize: 20, fontWeight: FontWeight.w500),
                               ),
                             ),
                             const SizedBox(
-                              height: 5,
+                              height: 10,
                             ),
                             Expanded(
                               child: SizedBox(
@@ -186,151 +171,175 @@ class _DashboardState extends State<Dashboard> {
                                                   return Column(
                                                     children: [
                                                       Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                          color: Colors.white,
-                                                          boxShadow: const [
-                                                            BoxShadow(
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        223,
-                                                                        223,
-                                                                        223),
-                                                                blurRadius: 1),
-                                                          ],
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(10),
-                                                          child: Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Container(
-                                                                height: 100,
-                                                                width: 100,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5),
-                                                                  color: Colors
-                                                                      .white,
-                                                                ),
-                                                                child:
-                                                                    ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0),
-                                                                  child: Image
-                                                                      .network(
-                                                                    data[index]
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            color: Colors.white,
+                                                            boxShadow: const [
+                                                              BoxShadow(
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          223,
+                                                                          223,
+                                                                          223),
+                                                                  blurRadius:
+                                                                      1),
+                                                            ],
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8),
+                                                            child: Row(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Container(
+                                                                  height: 100,
+                                                                  width: 100,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(5),
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                  child:
+                                                                      ClipRRect(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                    child: Image
+                                                                        .network(
+                                                                      data[index]
                                                                         .image,
-                                                                    fit: BoxFit
-                                                                        .scaleDown,
-                                                                    height: double
-                                                                        .infinity,
-                                                                    width: double
-                                                                        .infinity,
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .center,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      height: double
+                                                                          .infinity,
+                                                                      width: double
+                                                                          .infinity,
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .center,
+                                                                    ),
                                                                   ),
                                                                 ),
-                                                              ),
-                                                              const SizedBox(
-                                                                width: 20,
-                                                              ),
-                                                              Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  const SizedBox(
-                                                                    height: 2,
-                                                                  ),
-                                                                  Text(
-                                                                      'ORDER : #${data[index].orderId.toString()}'),
-                                                                  const SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Row(
+                                                                const SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 120,
+                                                                  width: 290,
+                                                                  child: Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceEvenly,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
                                                                     children: [
-                                                                      const Icon(
-                                                                        Icons
-                                                                            .location_on_outlined,
-                                                                        color:
-                                                                            kPrimaryColor,
-                                                                        size:
-                                                                            15,
+                                                                      Row(
+                                                                          mainAxisAlignment:
+                                                                        MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                      Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            'ORDER : #${data[index].orderId.toString()}',
+                                                                            style: const TextStyle(fontSize: 16),
+                                                                          ),
+                                                                        ],
                                                                       ),
+                                                                      Row(
+                                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                                        children: [
+                                                                          Image.asset(
+                                                                            "assets/icons/inr.png",
+                                                                            height: 11.5,
+                                                                          ),
+                                                                          const SizedBox(
+                                                                            width: 1,
+                                                                          ),
+                                                                          Text(
+                                                                            data[index].totalAmount.toString(),
+                                                                            style: const TextStyle(fontSize: 16),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                          ],
+                                                                        ),
                                                                       const SizedBox(
-                                                                        width:
-                                                                            5,
+                                                                        height:
+                                                                            7,
                                                                       ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            190,
-                                                                        child:
-                                                                            Text(
-                                                                          data[index]
+                                                                      Row(
+                                                                        children: [
+                                                                          const Icon(
+                                                                            Icons.location_on_outlined,
+                                                                            color:
+                                                                                kPrimaryColor,
+                                                                            size:
+                                                                                15,
+                                                                          ),
+                                                                          const SizedBox(
+                                                                            width:
+                                                                                3,
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                270,
+                                                                            child:
+                                                                                Text(
+                                                                              data[index]
                                                                               .address
                                                                               .toString()
                                                                               .replaceAll("\n", " "),
-                                                                          maxLines:
-                                                                              1,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          style: const TextStyle(
-                                                                              fontSize: 12,
-                                                                              color: Colors.black54),
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Row(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      const Icon(
-                                                                        Icons
-                                                                            .watch_later_outlined,
-                                                                        color:
-                                                                            kPrimaryColor,
-                                                                        size:
-                                                                            15,
+                                                                              maxLines: 1,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: const TextStyle(fontSize: 15, color: Colors.black54),
+                                                                            ),
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                       const SizedBox(
-                                                                        width:
+                                                                        height:
                                                                             7,
                                                                       ),
-                                                                      Text(
-                                                                        data[index]
+                                                                      Row(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.center,
+                                                                        children: [
+                                                                          Row(
+                                                                            children: [
+                                                                              const Icon(
+                                                                                Icons.watch_later_outlined,
+                                                                                color: kPrimaryColor,
+                                                                                size: 15,
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                width: 3,
+                                                                              ),
+                                                                              Text(
+                                                                                data[index]
                                                                             .createdOn,
-                                                                        style: const TextStyle(
-                                                                            fontSize:
-                                                                                12,
-                                                                            color:
-                                                                                Colors.black54),
+                                                                                style: const TextStyle(fontSize: 15, color: Colors.black54),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ],
                                                                       ),
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  SizedBox(
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            5,
+                                                                      ),
+                                                                      SizedBox(
                                                                     height: 30,
                                                                     width: 90,
                                                                     child:
@@ -376,12 +385,13 @@ class _DashboardState extends State<Dashboard> {
                                                                               TextAlign.center),
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
-                                                            ],
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
                                                       const SizedBox(
                                                         height: 10,
                                                       ),
@@ -431,18 +441,18 @@ class _DashboardState extends State<Dashboard> {
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('${snapshot.error}');
-                }
-              }
-              return const CircularProgressIndicator();
-            },
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('${snapshot.error}');
+                      }
+                    }
+                    return const CircularProgressIndicator();
+                  },
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

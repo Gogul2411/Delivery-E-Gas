@@ -48,12 +48,12 @@ class CustomForm extends StatelessWidget {
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hintTxt,
-        hintStyle: const TextStyle(color: kPrimaryLightColor),
+        hintStyle: const TextStyle(color: kPrimaryLightColor, fontSize: 16),
         labelText: labelTxt,
         labelStyle: TextStyle(
-            color: myFocusNode.hasFocus ? Colors.black : kPrimaryLightColor),
+            color: myFocusNode.hasFocus ? Colors.black : kPrimaryLightColor, fontSize: 16),
         contentPadding:
-            const EdgeInsets.symmetric(vertical: 18.0, horizontal: 18.0),
+            const EdgeInsets.symmetric(vertical: 22.0, horizontal: 22.0),
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(
             color: kPrimaryLightColor,

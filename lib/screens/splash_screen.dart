@@ -33,12 +33,8 @@ class _SplashState extends State<Splash> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
-    double height = MediaQuery.of(context).size.height;
-    // ignore: unused_local_variable
-    double width = MediaQuery.of(context).size.height;
     return Container(
-      color: Colors.grey[200],
+      color: kBackground,
       child: SafeArea(
         top: false,
         child: Scaffold(
@@ -56,8 +52,8 @@ class _SplashState extends State<Splash> {
               // ignore: avoid_unnecessary_containers
               child: Image.asset(
                 "assets/images/splash.png",
-                height: 250,
-                width: 250,
+                height: 300,
+                width: 300,
               ),
             ),
           ),

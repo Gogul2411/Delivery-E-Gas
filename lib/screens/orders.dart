@@ -21,7 +21,7 @@ class _OrdersState extends State<Orders> {
 
   int _page = 0;
 
-  final int _limit = 5;
+  final int _limit = 10;
 
   bool _isFirstLoadRunning = false;
   bool _hasNextPage = true;
@@ -147,343 +147,397 @@ class _OrdersState extends State<Orders> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackground,
-      appBar: CustomAppBar(
-        appbarText: "Orders",
-        action: const [
-          logout(),
-        ],
-      ),
-      body: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-              width: double.infinity,
-              height: 55,
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: items.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (ctx, index) {
-                  return Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(
-                            () {
-                              current = index;
-                              _page = 0;
-                              _firstLoad();
+    return WillPopScope(
+      onWillPop: () {
+        setState(
+          () {
+            Navigator.pop(context, true);
+          },
+        );
+        return Future.value(true);
+      },
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: kBackground,
+          appBar: CustomAppBar(
+            appbarText: "Orders",
+            action: const [
+              logout(),
+            ],
+          ),
+          body: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: items.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (ctx, index) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(
+                                () {
+                                  current = index;
+                                  _page = 0;
+                                  _firstLoad();
+                                },
+                              );
                             },
-                          );
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          margin: const EdgeInsets.all(10),
-                          width: 90,
-                          height: 35,
-                          decoration: BoxDecoration(
-                            color: current == index ? kPrimaryColor : null,
-                            borderRadius: current == index
-                                ? BorderRadius.circular(10)
-                                : BorderRadius.circular(10),
-                            border: current == index
-                                ? null
-                                : Border.all(color: Colors.black26, width: 1),
-                          ),
-                          child: Center(
-                            child: Text(
-                              items[index],
-                              style: TextStyle(
-                                  color: current == index
-                                      ? Colors.white
-                                      : Colors.black26),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                              width: 120,
+                              height: 45,
+                              decoration: BoxDecoration(
+                                color: current == index ? kPrimaryColor : null,
+                                borderRadius: current == index
+                                    ? BorderRadius.circular(10)
+                                    : BorderRadius.circular(10),
+                                border: current == index
+                                    ? null
+                                    : Border.all(
+                                        color: Colors.black26, width: 1),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  items[index],
+                                  style: TextStyle(
+                                      color: current == index
+                                          ? Colors.white
+                                          : Colors.black26),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-            Expanded(
-              child: Container(
-                child: _isFirstLoadRunning
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Center(
-                                child: Builder(
-                                  builder: (context) {
-                                    return _posts.isNotEmpty
-                                        ? ListView.builder(
-                                            physics:
-                                                const BouncingScrollPhysics(),
-                                            itemCount: _posts.length,
-                                            controller: _controller,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              return Column(
-                                                children: [
-                                                  InkWell(
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                        color: Colors.white,
-                                                        boxShadow: const [
-                                                          BoxShadow(
-                                                              color: Color
-                                                                  .fromARGB(
-                                                                      255,
-                                                                      223,
-                                                                      223,
-                                                                      223),
-                                                              blurRadius: 1),
-                                                        ],
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(10),
-                                                        child: Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Container(
-                                                              height: 100,
-                                                              width: 100,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                              child: ClipRRect(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8.0),
-                                                                child: Image
-                                                                    .network(
-                                                                  _posts[index]
-                                                                      ['image'],
-                                                                  fit: BoxFit
-                                                                      .contain,
-                                                                  height: double
-                                                                      .infinity,
-                                                                  width: double
-                                                                      .infinity,
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .center,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 20,
-                                                            ),
-                                                            Column(
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    child: _isFirstLoadRunning
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: Builder(
+                                      builder: (context) {
+                                        return _posts.isNotEmpty
+                                            ? ListView.builder(
+                                                physics:
+                                                    const BouncingScrollPhysics(),
+                                                itemCount: _posts.length,
+                                                controller: _controller,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  return Column(
+                                                    children: [
+                                                      InkWell(
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            color: Colors.white,
+                                                            boxShadow: const [
+                                                              BoxShadow(
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          223,
+                                                                          223,
+                                                                          223),
+                                                                  blurRadius:
+                                                                      1),
+                                                            ],
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8),
+                                                            child: Row(
                                                               crossAxisAlignment:
                                                                   CrossAxisAlignment
-                                                                      .start,
+                                                                      .center,
                                                               children: [
-                                                                const SizedBox(
-                                                                  height: 2,
-                                                                ),
-                                                                Text(
-                                                                    'ORDER : #${_posts[index]['order_id']}'),
-                                                                const SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .location_on_outlined,
-                                                                      color:
-                                                                          kPrimaryColor,
-                                                                      size: 15,
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      width: 5,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width:
-                                                                          190,
-                                                                      child:
-                                                                          Text(
-                                                                        _posts[index]["address"].toString().replaceAll(
-                                                                            "\n",
-                                                                            " "),
-                                                                        maxLines:
-                                                                            1,
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                        style: const TextStyle(
-                                                                            fontSize:
-                                                                                12,
-                                                                            color:
-                                                                                Colors.black54),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                const SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                Row(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .watch_later_outlined,
-                                                                      color:
-                                                                          kPrimaryColor,
-                                                                      size: 15,
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      width: 7,
-                                                                    ),
-                                                                    Text(
-                                                                      _posts[index]
-                                                                          [
-                                                                          'created_on'],
-                                                                      style: const TextStyle(
-                                                                          fontSize:
-                                                                              12,
-                                                                          color:
-                                                                              Colors.black54),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                const SizedBox(
-                                                                  height: 5,
-                                                                ),
                                                                 Container(
-                                                                  height: 30,
+                                                                  height: 100,
                                                                   width: 100,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     borderRadius:
                                                                         BorderRadius
                                                                             .circular(5),
-                                                                    color: const Color(
-                                                                        0xFFf7f7f7),
+                                                                    color: Colors
+                                                                        .white,
                                                                   ),
-                                                                  child: Center(
-                                                                    child: Text(
+                                                                  child:
+                                                                      ClipRRect(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                    child: Image
+                                                                        .network(
                                                                       _posts[index]
                                                                           [
-                                                                          'status_label'],
-                                                                      style: TextStyle(
-                                                                          color: HexColor(
-                                                                            _posts[index]['status_color'],
-                                                                          ),
-                                                                          fontSize: 12),
+                                                                          'image'],
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      height: double
+                                                                          .infinity,
+                                                                      width: double
+                                                                          .infinity,
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .center,
                                                                     ),
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 120,
+                                                                  width: 300,
+                                                                  child: Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceEvenly,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width:
+                                                                            300,
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            Row(
+                                                                              children: [
+                                                                                Text(
+                                                                                  'ORDER : #${_posts[index]['order_id']}',
+                                                                                  style: const TextStyle(fontSize: 16),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            Row(
+                                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                                              children: [
+                                                                                Column(
+                                                                                  children: [
+                                                                                    const SizedBox(
+                                                                                      height: 2,
+                                                                                    ),
+                                                                                    Image.asset(
+                                                                                      "assets/icons/inr.png",
+                                                                                      height: 11.5,
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                                const SizedBox(
+                                                                                  width: 1,
+                                                                                ),
+                                                                                Text(
+                                                                                  _posts[index]['total_amount'],
+                                                                                  style: const TextStyle(fontSize: 16),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            7,
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+                                                                          const Icon(
+                                                                            Icons.location_on_outlined,
+                                                                            color:
+                                                                                kPrimaryColor,
+                                                                            size:
+                                                                                15,
+                                                                          ),
+                                                                          const SizedBox(
+                                                                            width:
+                                                                                3,
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                280,
+                                                                            child:
+                                                                                Text(
+                                                                              _posts[index]["address"].toString().replaceAll("\n", " "),
+                                                                              maxLines: 1,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: const TextStyle(fontSize: 15, color: Colors.black54),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            7,
+                                                                      ),
+                                                                      Row(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.center,
+                                                                        children: [
+                                                                          Row(
+                                                                            children: [
+                                                                              const Icon(
+                                                                                Icons.watch_later_outlined,
+                                                                                color: kPrimaryColor,
+                                                                                size: 15,
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                width: 3,
+                                                                              ),
+                                                                              Text(
+                                                                                _posts[index]['created_on'],
+                                                                                style: const TextStyle(fontSize: 15, color: Colors.black54),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            5,
+                                                                      ),
+                                                                      Container(
+                                                                        height:
+                                                                            35,
+                                                                        width:
+                                                                            110,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(5),
+                                                                          color:
+                                                                              const Color(0xFFf7f7f7),
+                                                                        ),
+                                                                        child:
+                                                                            Center(
+                                                                          child:
+                                                                              Text(
+                                                                            _posts[index]['status_label'],
+                                                                            style: TextStyle(
+                                                                                color: HexColor(
+                                                                                  _posts[index]['status_color'],
+                                                                                ),
+                                                                                fontSize: 14),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
                                                                 ),
                                                               ],
                                                             ),
-                                                          ],
+                                                          ),
                                                         ),
+                                                        onTap: () async {
+                                                          final orderId =
+                                                              _posts[index]
+                                                                  ['ord_id'];
+                                                          final orderStatus =
+                                                              _posts[index][
+                                                                  'status_label'];
+                                                          final paymentMode =
+                                                              _posts[index][
+                                                                  'payment_mode'];
+                                                          // ignore: unused_local_variable
+                                                          final user = savePref(
+                                                              orderId,
+                                                              orderStatus,
+                                                              paymentMode);
+                                                          Navigator.of(context)
+                                                              .push(
+                                                                MaterialPageRoute(
+                                                                    builder: (_) =>
+                                                                        const OrderDetails()),
+                                                              )
+                                                              .then((val) => val
+                                                                  ? setState(
+                                                                      () {
+                                                                        _firstLoad();
+                                                                      },
+                                                                    )
+                                                                  : null);
+                                                        },
                                                       ),
+                                                      const SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              )
+                                            : Center(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Image.asset(
+                                                      "assets/images/empty-orders.png",
+                                                      width: 250,
                                                     ),
-                                                    onTap: () async {
-                                                      final orderId =
-                                                          _posts[index]
-                                                              ['ord_id'];
-                                                      final orderStatus =
-                                                          _posts[index]
-                                                              ['order_status'];
-                                                      final paymentMode =
-                                                          _posts[index]
-                                                              ['payment_mode'];
-                                                      // ignore: unused_local_variable
-                                                      final user = savePref(
-                                                          orderId,
-                                                          orderStatus,
-                                                          paymentMode);
-                                                      Navigator.of(context)
-                                                          .push(
-                                                            MaterialPageRoute(
-                                                                builder: (_) =>
-                                                                    const OrderDetails()),
-                                                          )
-                                                          .then((val) => val
-                                                              ? setState(
-                                                                  () {
-                                                                    _firstLoad();
-                                                                  },
-                                                                )
-                                                              : null);
-                                                    },
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                ],
+                                                    const SizedBox(
+                                                      height: 30,
+                                                    ),
+                                                    const Text(
+                                                      'No Orders Found!',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 20),
+                                                    ),
+                                                  ],
+                                                ),
                                               );
-                                            },
-                                          )
-                                        : Center(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Image.asset(
-                                                  "assets/images/empty-orders.png",
-                                                  width: 250,
-                                                ),
-                                                const SizedBox(
-                                                  height: 30,
-                                                ),
-                                                const Text(
-                                                  'No Orders Found!',
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 20),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                  },
+                                      },
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                if (_isLoadMoreRunning == true)
+                                  const Padding(
+                                    padding:
+                                        EdgeInsets.only(top: 10, bottom: 40),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                              ],
                             ),
-                            if (_isLoadMoreRunning == true)
-                              const Padding(
-                                padding: EdgeInsets.only(top: 10, bottom: 40),
-                                child: Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-              ),
+                          ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
